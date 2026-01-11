@@ -1,24 +1,59 @@
 import { useState } from "react";
-import { FaHeart, FaRegHeart, FaStar, FaShoppingCart, FaBolt } from "react-icons/fa";
+import {
+  FaHeart,
+  FaRegHeart,
+  FaStar,
+  FaShoppingCart,
+  FaBolt,
+} from "react-icons/fa";
+
 import ImageGallery from "../components/ImageGallery";
 import RelatedProducts from "../components/RelatedProducts";
 import "../styles/productDetail.css";
 
 export default function ProductDetail() {
+  /* ---------------- STATES ---------------- */
   const [selectedSize, setSelectedSize] = useState(null);
   const [qty, setQty] = useState(1);
   const [fav, setFav] = useState(false);
 
+  /* ---------------- REVIEWS ---------------- */
+  const [reviews, setReviews] = useState([
+    {
+      name: "Aarthi",
+      rating: 5,
+      comment: "Very soft fabric and perfect fit for my kid!",
+    },
+    {
+      name: "Rohit",
+      rating: 4,
+      comment: "Good quality and fast delivery. Worth buying.",
+    },
+  ]);
+
+  const [newReview, setNewReview] = useState({
+    name: "",
+    rating: 5,
+    comment: "",
+  });
+
+  const submitReview = () => {
+    if (!newReview.name || !newReview.comment) return;
+
+    setReviews([{ ...newReview }, ...reviews]);
+    setNewReview({ name: "", rating: 5, comment: "" });
+  };
+
+  /* ---------------- UI ---------------- */
   return (
     <div className="pd-container">
+      {/* ================= PRODUCT CARD ================= */}
       <div className="pd-main pd-card">
-
-        {/* LEFT: IMAGES */}
+        {/* LEFT : IMAGE SLIDER */}
         <ImageGallery />
 
-        {/* RIGHT: INFO */}
+        {/* RIGHT : PRODUCT INFO */}
         <div className="pd-info">
-
           {/* TITLE + FAV */}
           <div className="pd-title-row">
             <h1 className="pd-title">Cute Cotton Kids T-Shirt</h1>
@@ -30,17 +65,21 @@ export default function ProductDetail() {
           {/* PRICE */}
           <p className="pd-price">₹899</p>
 
-          {/* RATINGS */}
+          {/* RATING */}
           <div className="pd-rating">
-            <FaStar /><FaStar /><FaStar /><FaStar /><FaStar className="dim" />
-            <span>4.5 (128 Reviews)</span>
+            <FaStar />
+            <FaStar />
+            <FaStar />
+            <FaStar />
+            <FaStar className="dim" />
+            <span>4.5 (128 reviews)</span>
           </div>
 
           {/* DESCRIPTION */}
           <p className="pd-desc">
-            Premium quality cotton t-shirt crafted especially for kids.
-            Ultra-soft, breathable, and skin-friendly fabric ensures
-            all-day comfort. Perfect for playtime, outings, and casual wear.
+            Premium cotton t-shirt specially designed for kids.
+            Ultra-soft, breathable and skin-friendly fabric ensures
+            all-day comfort. Ideal for daily wear, playtime and outings.
           </p>
 
           {/* HIGHLIGHTS */}
@@ -65,7 +104,9 @@ export default function ProductDetail() {
                 </button>
               ))}
             </div>
-            {!selectedSize && <span className="pd-warning">Please select a size</span>}
+            {!selectedSize && (
+              <span className="pd-warning">Please select a size</span>
+            )}
           </div>
 
           {/* QUANTITY */}
@@ -81,8 +122,9 @@ export default function ProductDetail() {
 
           {/* DELIVERY */}
           <div className="pd-delivery">
-            🚚 Free Delivery by <strong>3-5 Business Days</strong><br />
-            🔁 Easy 7-Day Return Policy
+            🚚 Free delivery in <strong>3-5 business days</strong>
+            <br />
+            🔁 Easy 7-day return policy
           </div>
 
           {/* ACTION BUTTONS */}
@@ -98,29 +140,53 @@ export default function ProductDetail() {
         </div>
       </div>
 
-      {/* REVIEWS */}
+      {/* ================= REVIEWS ================= */}
       <div className="pd-reviews">
         <h2>Customer Reviews</h2>
 
-        <div className="pd-review-card">
-          <strong>⭐ ⭐ ⭐ ⭐ ⭐</strong>
-          <p>
-            Very soft material and perfect fitting for my kid.
-            Totally worth the price!
-          </p>
-          <span>— Aarthi, Chennai</span>
+        {/* REVIEW FORM */}
+        <div className="pd-review-form">
+          <input
+            placeholder="Your Name"
+            value={newReview.name}
+            onChange={(e) =>
+              setNewReview({ ...newReview, name: e.target.value })
+            }
+          />
+
+          <select
+            value={newReview.rating}
+            onChange={(e) =>
+              setNewReview({ ...newReview, rating: Number(e.target.value) })
+            }
+          >
+            <option value="5">★★★★★ (5)</option>
+            <option value="4">★★★★☆ (4)</option>
+            <option value="3">★★★☆☆ (3)</option>
+          </select>
+
+          <textarea
+            placeholder="Write your review..."
+            value={newReview.comment}
+            onChange={(e) =>
+              setNewReview({ ...newReview, comment: e.target.value })
+            }
+          />
+
+          <button onClick={submitReview}>Submit Review</button>
         </div>
 
-        <div className="pd-review-card">
-          <strong>⭐ ⭐ ⭐ ⭐</strong>
-          <p>
-            Nice quality and fast delivery. My son loved it.
-          </p>
-          <span>— Rohit, Bengaluru</span>
-        </div>
+        {/* REVIEW LIST */}
+        {reviews.map((r, i) => (
+          <div key={i} className="pd-review-card">
+            <strong>{"★".repeat(r.rating)}</strong>
+            <p>{r.comment}</p>
+            <span>— {r.name}</span>
+          </div>
+        ))}
       </div>
 
-      {/* RELATED */}
+      {/* ================= RELATED PRODUCTS ================= */}
       <RelatedProducts />
     </div>
   );
