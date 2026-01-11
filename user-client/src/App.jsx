@@ -1,27 +1,30 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
-import Login from './pages/Login'
-import Register from './pages/Register'
-import ForgotPassword from './pages/ForgotPassword'
-import Home from './pages/Home'
-import ProductDetail from './pages/ProductDetail'
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import ForgotPassword from "./pages/ForgotPassword";
+import Home from "./pages/Home";
+import ProductDetail from "./pages/ProductDetail";
+import Cart from "./pages/Cart";
+import Header from "./components/Header";
 
 /* 🔐 Private Route */
 const PrivateRoute = ({ children }) => {
-  const token = localStorage.getItem('token')
-  return token ? children : <Navigate to="/" replace />
-}
+  const token = localStorage.getItem("token");
+  return token ? children : <Navigate to="/" replace />;
+};
 
 export default function App() {
   return (
     <BrowserRouter>
-      <Routes>
+      <Header /> {/* ✅ ALWAYS visible */}
 
-        {/* Public Routes */}
+      <Routes>
+        {/* Public */}
         <Route path="/" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/forgot" element={<ForgotPassword />} />
 
-        {/* Protected Routes */}
+        {/* Protected */}
         <Route
           path="/home"
           element={
@@ -40,10 +43,18 @@ export default function App() {
           }
         />
 
+        <Route
+          path="/cart"
+          element={
+            <PrivateRoute>
+              <Cart />
+            </PrivateRoute>
+          }
+        />
+
         {/* Fallback */}
         <Route path="*" element={<Navigate to="/" replace />} />
-
       </Routes>
     </BrowserRouter>
-  )
+  );
 }
