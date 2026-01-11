@@ -67,9 +67,17 @@ export default function RelatedProducts() {
                 ))}
               </div>
 
-              <button className="pd-related-cart">
-                <FaShoppingCart /> Add to Cart
+              <button
+                className="pd-related-cart"
+                onClick={() => {
+                  addToCart(product);
+                  setShowToast(true);
+                  setTimeout(() => setShowToast(false), 2000);
+                }}
+              >
+                Add to Cart
               </button>
+
             </div>
           ))}
         </div>

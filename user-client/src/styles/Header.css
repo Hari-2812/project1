@@ -1,0 +1,124 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+
+/* ======================
+   HEADER BASE
+====================== */
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  padding: 16px 36px;
+  font-family: "Inter", sans-serif;
+
+  /* GLASS + GRADIENT (MATCH SITE) */
+  background: linear-gradient(
+    135deg,
+    rgba(30, 60, 114, 0.85),
+    rgba(15, 32, 39, 0.85)
+  );
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+}
+
+/* ======================
+   LOGO
+====================== */
+.header-logo {
+  font-size: 22px;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: 0.5px;
+}
+
+.header-logo span {
+  background: linear-gradient(135deg, #00c6ff, #66e0ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* ======================
+   RIGHT SIDE
+====================== */
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+}
+
+/* ======================
+   CART ICON
+====================== */
+.cart-icon {
+  position: relative;
+  font-size: 22px;
+  color: #ffffff;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.cart-icon:hover {
+  color: #00c6ff;
+  transform: translateY(-2px) scale(1.05);
+}
+
+/* ======================
+   CART BADGE
+====================== */
+.cart-badge {
+  position: absolute;
+  top: -7px;
+  right: -10px;
+
+  min-width: 18px;
+  height: 18px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: linear-gradient(135deg, #ff5e7e, #ff3d00);
+  color: #ffffff;
+
+  font-size: 11px;
+  font-weight: 700;
+
+  border-radius: 50%;
+  box-shadow: 0 6px 18px rgba(255, 61, 0, 0.6);
+
+  animation: badgePop 0.25s ease;
+}
+
+/* BADGE ANIMATION */
+@keyframes badgePop {
+  0% {
+    transform: scale(0.6);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* ======================
+   MOBILE
+====================== */
+@media (max-width: 768px) {
+  .header {
+    padding: 14px 20px;
+  }
+
+  .header-logo {
+    font-size: 20px;
+  }
+
+  .cart-icon {
+    font-size: 20px;
+  }
+}

@@ -5,30 +5,59 @@ import {
   FaStar,
   FaShoppingCart,
   FaBolt,
+  FaChevronLeft,
+  FaChevronRight,
 } from "react-icons/fa";
 
-import ImageGallery from "../components/ImageGallery";
-import RelatedProducts from "../components/RelatedProducts";
+import { useCart } from "../context/CartContext";
+import Toast from "../components/Toast";
 import "../styles/productDetail.css";
 
+/* ---------------- MOCK DATA ---------------- */
+const images = [
+  "https://images.unsplash.com/photo-1542060748-10c28b62716c?auto=format&fit=crop&w=800&q=80",
+  "https://images.unsplash.com/photo-1520975922203-bc2a6e4d23c3?auto=format&fit=crop&w=800&q=80",
+  "https://images.unsplash.com/photo-1519238263530-99bdd11df2ea?auto=format&fit=crop&w=800&q=80",
+];
+
+const relatedProducts = [
+  {
+    _id: "1",
+    name: "Kids Denim Jacket",
+    price: 1499,
+    image:
+      "https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?auto=format&fit=crop&w=600&q=80",
+  },
+  {
+    _id: "2",
+    name: "Printed Cotton Shirt",
+    price: 799,
+    image:
+      "https://images.unsplash.com/photo-1582418702059-97ebafb35d09?auto=format&fit=crop&w=600&q=80",
+  },
+  {
+    _id: "3",
+    name: "Summer Shorts",
+    price: 599,
+    image:
+      "https://images.unsplash.com/photo-1596461404969-9ae70f2830c1?auto=format&fit=crop&w=600&q=80",
+  },
+];
+
 export default function ProductDetail() {
+  const { addToCart } = useCart();
+
   /* ---------------- STATES ---------------- */
+  const [activeImg, setActiveImg] = useState(0);
   const [selectedSize, setSelectedSize] = useState(null);
   const [qty, setQty] = useState(1);
   const [fav, setFav] = useState(false);
+  const [showToast, setShowToast] = useState(false);
 
   /* ---------------- REVIEWS ---------------- */
   const [reviews, setReviews] = useState([
-    {
-      name: "Aarthi",
-      rating: 5,
-      comment: "Very soft fabric and perfect fit for my kid!",
-    },
-    {
-      name: "Rohit",
-      rating: 4,
-      comment: "Good quality and fast delivery. Worth buying.",
-    },
+    { name: "Aarthi", rating: 5, comment: "Very soft fabric and perfect fit!" },
+    { name: "Rohit", rating: 4, comment: "Good quality and fast delivery." },
   ]);
 
   const [newReview, setNewReview] = useState({
@@ -37,9 +66,33 @@ export default function ProductDetail() {
     comment: "",
   });
 
+  /* ---------------- FUNCTIONS ---------------- */
+  const nextImg = () =>
+    setActiveImg((prev) => (prev + 1) % images.length);
+
+  const prevImg = () =>
+    setActiveImg((prev) =>
+      prev === 0 ? images.length - 1 : prev - 1
+    );
+
+  const handleAddToCart = () => {
+    if (!selectedSize) return;
+
+    addToCart({
+      _id: "kids-tshirt-1",
+      name: "Cute Cotton Kids T-Shirt",
+      price: 899,
+      image: images[0],
+      size: selectedSize,
+      qty,
+    });
+
+    setShowToast(true);
+    setTimeout(() => setShowToast(false), 2000);
+  };
+
   const submitReview = () => {
     if (!newReview.name || !newReview.comment) return;
-
     setReviews([{ ...newReview }, ...reviews]);
     setNewReview({ name: "", rating: 5, comment: "" });
   };
@@ -47,14 +100,36 @@ export default function ProductDetail() {
   /* ---------------- UI ---------------- */
   return (
     <div className="pd-container">
-      {/* ================= PRODUCT CARD ================= */}
-      <div className="pd-main pd-card">
-        {/* LEFT : IMAGE SLIDER */}
-        <ImageGallery />
+      {/* TOAST */}
+      <Toast show={showToast} message="Item added to cart" />
 
-        {/* RIGHT : PRODUCT INFO */}
+      {/* PRODUCT CARD */}
+      <div className="pd-card">
+        {/* IMAGE SLIDER */}
+        <div className="pd-gallery">
+          <div className="pd-image-frame">
+            <img src={images[activeImg]} alt="Product" />
+            <button className="pd-img-btn left" onClick={prevImg}>
+              <FaChevronLeft />
+            </button>
+            <button className="pd-img-btn right" onClick={nextImg}>
+              <FaChevronRight />
+            </button>
+          </div>
+
+          <div className="pd-dots">
+            {images.map((_, i) => (
+              <span
+                key={i}
+                className={`pd-dot ${i === activeImg ? "active" : ""}`}
+                onClick={() => setActiveImg(i)}
+              />
+            ))}
+          </div>
+        </div>
+
+        {/* INFO */}
         <div className="pd-info">
-          {/* TITLE + FAV */}
           <div className="pd-title-row">
             <h1 className="pd-title">Cute Cotton Kids T-Shirt</h1>
             <span className="pd-fav" onClick={() => setFav(!fav)}>
@@ -62,54 +137,41 @@ export default function ProductDetail() {
             </span>
           </div>
 
-          {/* PRICE */}
           <p className="pd-price">₹899</p>
 
-          {/* RATING */}
           <div className="pd-rating">
-            <FaStar />
-            <FaStar />
-            <FaStar />
-            <FaStar />
+            <FaStar /><FaStar /><FaStar /><FaStar />
             <FaStar className="dim" />
             <span>4.5 (128 reviews)</span>
           </div>
 
-          {/* DESCRIPTION */}
           <p className="pd-desc">
-            Premium cotton t-shirt specially designed for kids.
-            Ultra-soft, breathable and skin-friendly fabric ensures
-            all-day comfort. Ideal for daily wear, playtime and outings.
+            Premium cotton t-shirt designed for kids. Ultra-soft,
+            breathable and skin-friendly.
           </p>
 
-          {/* HIGHLIGHTS */}
           <ul className="pd-highlights">
             <li>✔ 100% Organic Cotton</li>
             <li>✔ Safe for Sensitive Skin</li>
             <li>✔ Lightweight & Breathable</li>
-            <li>✔ Easy Wash & Long Lasting</li>
+            <li>✔ Easy Wash & Durable</li>
           </ul>
 
-          {/* SIZE */}
           <div className="pd-option">
             <label>Select Size</label>
             <div className="pd-sizes">
-              {["S", "M", "L"].map((size) => (
+              {["S", "M", "L"].map((s) => (
                 <button
-                  key={size}
-                  className={selectedSize === size ? "active" : ""}
-                  onClick={() => setSelectedSize(size)}
+                  key={s}
+                  className={selectedSize === s ? "active" : ""}
+                  onClick={() => setSelectedSize(s)}
                 >
-                  {size}
+                  {s}
                 </button>
               ))}
             </div>
-            {!selectedSize && (
-              <span className="pd-warning">Please select a size</span>
-            )}
           </div>
 
-          {/* QUANTITY */}
           <div className="pd-option">
             <label>Quantity</label>
             <input
@@ -120,16 +182,8 @@ export default function ProductDetail() {
             />
           </div>
 
-          {/* DELIVERY */}
-          <div className="pd-delivery">
-            🚚 Free delivery in <strong>3-5 business days</strong>
-            <br />
-            🔁 Easy 7-day return policy
-          </div>
-
-          {/* ACTION BUTTONS */}
           <div className="pd-actions">
-            <button className="pd-cart-btn">
+            <button className="pd-cart-btn" onClick={handleAddToCart}>
               <FaShoppingCart /> Add to Cart
             </button>
 
@@ -140,11 +194,10 @@ export default function ProductDetail() {
         </div>
       </div>
 
-      {/* ================= REVIEWS ================= */}
+      {/* REVIEWS */}
       <div className="pd-reviews">
         <h2>Customer Reviews</h2>
 
-        {/* REVIEW FORM */}
         <div className="pd-review-form">
           <input
             placeholder="Your Name"
@@ -176,7 +229,6 @@ export default function ProductDetail() {
           <button onClick={submitReview}>Submit Review</button>
         </div>
 
-        {/* REVIEW LIST */}
         {reviews.map((r, i) => (
           <div key={i} className="pd-review-card">
             <strong>{"★".repeat(r.rating)}</strong>
@@ -186,8 +238,27 @@ export default function ProductDetail() {
         ))}
       </div>
 
-      {/* ================= RELATED PRODUCTS ================= */}
-      <RelatedProducts />
+      {/* RELATED */}
+      <div className="pd-related">
+        <h2>Related Products</h2>
+        <div className="pd-related-grid">
+          {relatedProducts.map((p) => (
+            <div key={p._id} className="pd-related-card">
+              <img src={p.image} alt={p.name} />
+              <h4>{p.name}</h4>
+              <p>₹{p.price}</p>
+              <button
+                className="pd-related-cart"
+                onClick={() =>
+                  addToCart({ ...p, qty: 1 })
+                }
+              >
+                <FaShoppingCart /> Add to Cart
+              </button>
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }
