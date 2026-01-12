@@ -1,12 +1,15 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import ForgotPassword from "./pages/ForgotPassword";
 import Home from "./pages/Home";
 import ProductDetail from "./pages/ProductDetail";
 import Cart from "./pages/Cart";
-import Header from "./components/Header";
 import Checkout from "./pages/Checkout";
+
+import Header from "./components/Header";
+import OrderSuccess from "./pages/Order";
 
 /* 🔐 Private Route */
 const PrivateRoute = ({ children }) => {
@@ -17,15 +20,16 @@ const PrivateRoute = ({ children }) => {
 export default function App() {
   return (
     <BrowserRouter>
-      <Header /> {/* ✅ ALWAYS visible */}
+      {/* Header visible on all pages */}
+      <Header />
 
       <Routes>
-        {/* Public */}
+        {/* PUBLIC ROUTES */}
         <Route path="/" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/forgot" element={<ForgotPassword />} />
 
-        {/* Protected */}
+        {/* PROTECTED ROUTES */}
         <Route
           path="/home"
           element={
@@ -52,6 +56,7 @@ export default function App() {
             </PrivateRoute>
           }
         />
+
         <Route
           path="/checkout"
           element={
@@ -60,9 +65,16 @@ export default function App() {
             </PrivateRoute>
           }
         />
+        <Route
+          path="/order-success"
+          element={
+            <PrivateRoute>
+              <OrderSuccess />
+            </PrivateRoute>
+          }
+        />
 
-
-        {/* Fallback */}
+        {/* FALLBACK */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
