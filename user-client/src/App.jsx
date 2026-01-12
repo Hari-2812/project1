@@ -10,6 +10,8 @@ import Checkout from "./pages/Checkout";
 
 import Header from "./components/Header";
 import OrderSuccess from "./pages/Order";
+import Offers from "./pages/Offers";
+
 
 /* 🔐 Private Route */
 const PrivateRoute = ({ children }) => {
@@ -70,6 +72,14 @@ export default function App() {
           element={
             <PrivateRoute>
               <OrderSuccess />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/offers"
+          element={
+            <PrivateRoute>
+              <Offers />
             </PrivateRoute>
           }
         />
