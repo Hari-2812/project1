@@ -6,6 +6,7 @@ import Home from "./pages/Home";
 import ProductDetail from "./pages/ProductDetail";
 import Cart from "./pages/Cart";
 import Header from "./components/Header";
+import Checkout from "./pages/Checkout";
 
 /* 🔐 Private Route */
 const PrivateRoute = ({ children }) => {
@@ -51,6 +52,15 @@ export default function App() {
             </PrivateRoute>
           }
         />
+        <Route
+          path="/checkout"
+          element={
+            <PrivateRoute>
+              <Checkout />
+            </PrivateRoute>
+          }
+        />
+
 
         {/* Fallback */}
         <Route path="*" element={<Navigate to="/" replace />} />

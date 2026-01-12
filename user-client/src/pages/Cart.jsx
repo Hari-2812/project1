@@ -1,16 +1,26 @@
 import { FaTrashAlt, FaPlus, FaMinus } from "react-icons/fa";
 import { useCart } from "../context/CartContext";
+import { useNavigate } from "react-router-dom";
 import "../styles/cart.css";
 
 export default function Cart() {
-  const { cart, updateQty, removeFromCart } = useCart();
+  const navigate = useNavigate();
 
-  // 🧮 Calculate total
+  // ✅ Safe default to avoid reduce error
+  const { cart = [], updateQty, removeFromCart } = useCart();
+
+  // ✅ Navigate to checkout
+  const handleCheckout = () => {
+    navigate("/checkout");
+  };
+
+  // 🧮 TOTAL CALCULATION (dynamic)
   const totalAmount = cart.reduce(
     (sum, item) => sum + item.price * item.qty,
     0
   );
 
+  // 🛒 EMPTY CART
   if (cart.length === 0) {
     return (
       <div className="cart-container">
@@ -36,7 +46,7 @@ export default function Cart() {
             <p className="price">₹{item.price}</p>
           </div>
 
-          {/* QTY */}
+          {/* QUANTITY */}
           <div className="qty-controls">
             <button
               onClick={() =>
@@ -77,7 +87,10 @@ export default function Cart() {
       <div className="cart-summary">
         <h2>Total</h2>
         <p>₹{totalAmount}</p>
-        <button className="checkout-btn">Proceed to Checkout</button>
+
+        <button className="checkout-btn" onClick={handleCheckout}>
+          Proceed to Checkout
+        </button>
       </div>
     </div>
   );
