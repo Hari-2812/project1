@@ -1,3 +1,10 @@
+import HeroBanner from "../components/HeroBanner";
+
 export default function Home() {
-  return <h1 style={{color:'white'}}>Welcome Home 🎉</h1>
+  return (
+    <div className="home-page">
+      <HeroBanner />
+      {/* Add more sections here later */}
+    </div>
+  );
 }
