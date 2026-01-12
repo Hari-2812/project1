@@ -3,6 +3,8 @@ import mongoose from 'mongoose'
 import cors from 'cors'
 import dotenv from 'dotenv'
 import authRoutes from './routes/authRoutes.js'
+import offerRoutes from "./routes/offerRoutes.js";
+
 
 /* Load env FIRST */
 dotenv.config()
@@ -11,6 +13,7 @@ const app = express()
 
 app.use(cors())
 app.use(express.json())
+app.use("/api/offers", offerRoutes)
 
 /* Test env */
 console.log('Mongo URI exists:', !!process.env.MONGO_URI)
