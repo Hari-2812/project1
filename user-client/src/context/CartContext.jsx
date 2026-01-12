@@ -1,59 +1,14 @@
-import { createContext, useContext, useState } from "react";
+const placeOrder = () => {
+  if (!validate()) return;
 
-const CartContext = createContext({
-  cart: [],
-  addToCart: () => {},
-  updateQty: () => {},
-  removeFromCart: () => {},
-});
+  const transactionId = "TXN" + Date.now();
 
-export const CartProvider = ({ children }) => {
-  const [cart, setCart] = useState([]);
+  clearCart(); // ✅ CART CLEARED HERE
 
-  const addToCart = (item) => {
-    setCart((prev) => {
-      const existing = prev.find(
-        (p) => p._id === item._id && p.size === item.size
-      );
-
-      if (existing) {
-        return prev.map((p) =>
-          p._id === item._id && p.size === item.size
-            ? { ...p, qty: p.qty + item.qty }
-            : p
-        );
-      }
-
-      return [...prev, item];
-    });
-  };
-
-  const updateQty = (id, size, qty) => {
-    if (qty < 1) return;
-    setCart((prev) =>
-      prev.map((item) =>
-        item._id === id && item.size === size
-          ? { ...item, qty }
-          : item
-      )
-    );
-  };
-
-  const removeFromCart = (id, size) => {
-    setCart((prev) =>
-      prev.filter(
-        (item) => !(item._id === id && item.size === size)
-      )
-    );
-  };
-
-  return (
-    <CartContext.Provider
-      value={{ cart, addToCart, updateQty, removeFromCart }}
-    >
-      {children}
-    </CartContext.Provider>
-  );
+  navigate("/order-success", {
+    state: {
+      transactionId,
+      total,
+    },
+  });
 };
-
-export const useCart = () => useContext(CartContext);
