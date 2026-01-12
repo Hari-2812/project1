@@ -1,26 +1,48 @@
-import { FaShoppingCart } from "react-icons/fa";
-import { useCart } from "../context/CartContext";
+import { useMemo } from "react"; // Added for performance
 import { Link } from "react-router-dom";
+import { FaShoppingCart, FaHeart, FaUser } from "react-icons/fa"; // Grouped icons
+import { useCart } from "../context/CartContext";
 import "../styles/Header.css";
 
 export default function Header() {
   const { cart } = useCart();
 
-  // ✅ SAFETY GUARD
-  const totalQty = Array.isArray(cart)
-    ? cart.reduce((sum, item) => sum + item.qty, 0)
-    : 0;
+  // ✅ EFFICIENT: Only recalculates if 'cart' changes
+  const totalQty = useMemo(() => {
+    return Array.isArray(cart)
+      ? cart.reduce((sum, item) => sum + item.qty, 0)
+      : 0;
+  }, [cart]);
 
   return (
     <header className="header">
-      <h2 className="logo">KidsStore</h2>
+      {/* ✅ Fixed class name to match CSS */}
+      <h2 className="header-logo">
+        KidsStore<span>.</span>
+      </h2>
 
-      <Link to="/cart" className="cart-icon">
-        <FaShoppingCart />
-        {totalQty > 0 && (
-          <span className="cart-badge">{totalQty}</span>
-        )}
-      </Link>
+      <div className="search-box">
+        <input
+          type="text"
+          placeholder="Search for kids wear..."
+          aria-label="Search"
+        />
+      </div>
+
+      <div className="header-right">
+        <Link to="/cart" className="cart-icon" title="Cart">
+          <FaShoppingCart />
+          {totalQty > 0 && <span className="cart-badge">{totalQty}</span>}
+        </Link>
+
+        <Link to="/wishlist" className="icon-btn" title="Wishlist">
+          <FaHeart />
+        </Link>
+
+        <Link to="/profile" className="icon-btn" title="Profile">
+          <FaUser />
+        </Link>
+      </div>
     </header>
   );
 }
