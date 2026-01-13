@@ -1,5 +1,7 @@
-import { FaShoppingCart, FaHeart } from "react-icons/fa";
+import { useMemo } from "react";
 import { Link } from "react-router-dom";
+import { FaShoppingCart, FaHeart, FaUser } from "react-icons/fa";
+
 import { useCart } from "../context/CartContext";
 import { useFavorite } from "../context/FavoriteContext";
 import "../styles/Header.css";
@@ -8,17 +10,40 @@ export default function Header() {
   const { cart } = useCart();
   const { favorites } = useFavorite();
 
-  const totalQty = Array.isArray(cart)
-    ? cart.reduce((sum, item) => sum + item.qty, 0)
-    : 0;
+  /* ======================
+     CALCULATIONS
+  ====================== */
+  const totalQty = useMemo(() => {
+    return Array.isArray(cart)
+      ? cart.reduce((sum, item) => sum + item.qty, 0)
+      : 0;
+  }, [cart]);
 
+  const totalFav = useMemo(() => {
+    return Array.isArray(favorites) ? favorites.length : 0;
+  }, [favorites]);
+
+  /* ======================
+     UI
+  ====================== */
   return (
     <header className="header">
-      <h2 className="logo">
+      {/* LOGO */}
+      <Link to="/home" className="header-logo">
         Kids<span>Store</span>
-      </h2>
+      </Link>
 
-      <div className="header-icons">
+      {/* SEARCH */}
+      <div className="search-box">
+        <input
+          type="text"
+          placeholder="Search for kids wear..."
+          aria-label="Search products"
+        />
+      </div>
+
+      {/* RIGHT ICONS */}
+      <div className="header-right">
         {/* FAVORITES */}
         <Link to="/favorites" className="cart-icon">
           <FaHeart />
@@ -33,6 +58,11 @@ export default function Header() {
           {totalQty > 0 && (
             <span className="cart-badge">{totalQty}</span>
           )}
+        </Link>
+
+        {/* PROFILE */}
+        <Link to="/profile" className="icon-btn" title="Profile">
+          <FaUser />
         </Link>
       </div>
     </header>
