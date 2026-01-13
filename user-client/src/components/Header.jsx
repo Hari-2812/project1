@@ -2,11 +2,12 @@ import { useMemo } from "react"; // Added for performance
 import { Link } from "react-router-dom";
 import { FaShoppingCart, FaHeart, FaUser } from "react-icons/fa"; // Grouped icons
 import { useCart } from "../context/CartContext";
+import { useNavigate } from "react-router-dom";
 import "../styles/Header.css";
 
 export default function Header() {
   const { cart } = useCart();
-
+  const navigate = useNavigate();
   // ✅ EFFICIENT: Only recalculates if 'cart' changes
   const totalQty = useMemo(() => {
     return Array.isArray(cart)
@@ -14,10 +15,14 @@ export default function Header() {
       : 0;
   }, [cart]);
 
+  const handleCheckout = () => {
+    navigate("/home");
+  };
+
   return (
     <header className="header">
       {/* ✅ Fixed class name to match CSS */}
-      <h2 className="header-logo">
+      <h2 className="header-logo"  onClick={handleCheckout}>
         KidsStore<span>.</span>
       </h2>
 
