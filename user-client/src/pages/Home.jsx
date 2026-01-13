@@ -1,14 +1,15 @@
 import HeroBanner from "../components/HeroBanner";
 import Marquee from "../components/Marquee";
 import NewArrivals from "../components/NewArrivals";
+import Categories from "../components/Categories";
 
 export default function Home() {
   return (
     <div className="home-page">
       <HeroBanner />
-      <Marquee /> {/* 👈 Announcement bar */}
+      <Marquee />
       <NewArrivals />
-      {/* Add more sections here later */}
+      <Categories />
     </div>
   );
 }
