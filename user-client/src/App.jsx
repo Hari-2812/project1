@@ -7,14 +7,14 @@ import Home from "./pages/Home";
 import ProductDetail from "./pages/ProductDetail";
 import Cart from "./pages/Cart";
 import Checkout from "./pages/Checkout";
-
-import Header from "./components/Header";
-import OrderSuccess from "./pages/Order";
 import Offers from "./pages/Offers";
 import Favorites from "./pages/Favorites";
+import OrderSuccess from "./pages/Order";
+import BoysProducts from "./pages/BoysProducts"; // ✅ ADD THIS
 
+import Header from "./components/Header";
 
-/* 🔐 Private Route */
+/* 🔐 PRIVATE ROUTE */
 const PrivateRoute = ({ children }) => {
   const token = localStorage.getItem("token");
   return token ? children : <Navigate to="/" replace />;
@@ -23,16 +23,16 @@ const PrivateRoute = ({ children }) => {
 export default function App() {
   return (
     <BrowserRouter>
-      {/* Header visible on all pages */}
+      {/* 🔝 HEADER ALWAYS VISIBLE */}
       <Header />
 
       <Routes>
-        {/* PUBLIC ROUTES */}
+        {/* 🌐 PUBLIC ROUTES */}
         <Route path="/" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/forgot" element={<ForgotPassword />} />
 
-        {/* PROTECTED ROUTES */}
+        {/* 🔒 PROTECTED ROUTES */}
         <Route
           path="/home"
           element={
@@ -42,6 +42,17 @@ export default function App() {
           }
         />
 
+        {/* 🧒 BOYS PRODUCT LISTING */}
+        <Route
+          path="/boys"
+          element={
+            <PrivateRoute>
+              <BoysProducts />
+            </PrivateRoute>
+          }
+        />
+
+        {/* 📦 PRODUCT DETAILS */}
         <Route
           path="/product/:id"
           element={
@@ -51,6 +62,7 @@ export default function App() {
           }
         />
 
+        {/* 🛒 CART */}
         <Route
           path="/cart"
           element={
@@ -60,6 +72,7 @@ export default function App() {
           }
         />
 
+        {/* 💳 CHECKOUT */}
         <Route
           path="/checkout"
           element={
@@ -68,6 +81,8 @@ export default function App() {
             </PrivateRoute>
           }
         />
+
+        {/* ❤️ FAVORITES */}
         <Route
           path="/favorites"
           element={
@@ -76,6 +91,8 @@ export default function App() {
             </PrivateRoute>
           }
         />
+
+        {/* 🎉 ORDER SUCCESS */}
         <Route
           path="/order-success"
           element={
@@ -84,6 +101,8 @@ export default function App() {
             </PrivateRoute>
           }
         />
+
+        {/* 🔥 OFFERS */}
         <Route
           path="/offers"
           element={
@@ -93,7 +112,7 @@ export default function App() {
           }
         />
 
-        {/* FALLBACK */}
+        {/* ❌ FALLBACK */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
