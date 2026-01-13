@@ -11,6 +11,7 @@ import Checkout from "./pages/Checkout";
 import Header from "./components/Header";
 import OrderSuccess from "./pages/Order";
 import Offers from "./pages/Offers";
+import Favorites from "./pages/Favorites";
 
 
 /* 🔐 Private Route */
@@ -64,6 +65,14 @@ export default function App() {
           element={
             <PrivateRoute>
               <Checkout />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/favorites"
+          element={
+            <PrivateRoute>
+              <Favorites />
             </PrivateRoute>
           }
         />
