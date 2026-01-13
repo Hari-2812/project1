@@ -5,6 +5,7 @@ import { FaShoppingCart, FaHeart, FaUser } from "react-icons/fa";
 import { useCart } from "../context/CartContext";
 import { useFavorite } from "../context/FavoriteContext";
 import "../styles/Header.css";
+import SearchBox from "./SearchBox";
 
 export default function Header() {
   const { cart } = useCart();
@@ -34,14 +35,8 @@ export default function Header() {
       </Link>
 
       {/* SEARCH */}
-      <div className="search-box">
-        <input
-          type="text"
-          placeholder="Search for kids wear..."
-          aria-label="Search products"
-        />
-      </div>
-
+      <SearchBox />
+      
       {/* RIGHT ICONS */}
       <div className="header-right">
         {/* FAVORITES */}
