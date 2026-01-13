@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
 
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -7,32 +7,37 @@ import Home from "./pages/Home";
 import ProductDetail from "./pages/ProductDetail";
 import Cart from "./pages/Cart";
 import Checkout from "./pages/Checkout";
-import Offers from "./pages/Offers";
 import Favorites from "./pages/Favorites";
+import Offers from "./pages/Offers";
 import OrderSuccess from "./pages/Order";
-import BoysProducts from "./pages/BoysProducts"; // ✅ ADD THIS
+import Boys from "./pages/BoysProducts"; // ✅ ADDED
 
 import Header from "./components/Header";
 
-/* 🔐 PRIVATE ROUTE */
+/* 🔐 Private Route */
 const PrivateRoute = ({ children }) => {
   const token = localStorage.getItem("token");
   return token ? children : <Navigate to="/" replace />;
 };
 
-export default function App() {
+/* 🔹 Wrapper to control Header visibility */
+function Layout() {
+  const location = useLocation();
+
+  const hideHeaderRoutes = ["/", "/register", "/forgot"];
+  const shouldHideHeader = hideHeaderRoutes.includes(location.pathname);
+
   return (
-    <BrowserRouter>
-      {/* 🔝 HEADER ALWAYS VISIBLE */}
-      <Header />
+    <>
+      {!shouldHideHeader && <Header />}
 
       <Routes>
-        {/* 🌐 PUBLIC ROUTES */}
+        {/* PUBLIC */}
         <Route path="/" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/forgot" element={<ForgotPassword />} />
 
-        {/* 🔒 PROTECTED ROUTES */}
+        {/* PROTECTED */}
         <Route
           path="/home"
           element={
@@ -42,17 +47,16 @@ export default function App() {
           }
         />
 
-        {/* 🧒 BOYS PRODUCT LISTING */}
+        {/* ✅ BOYS PAGE */}
         <Route
           path="/boys"
           element={
             <PrivateRoute>
-              <BoysProducts />
+              <Boys />
             </PrivateRoute>
           }
         />
 
-        {/* 📦 PRODUCT DETAILS */}
         <Route
           path="/product/:id"
           element={
@@ -62,7 +66,6 @@ export default function App() {
           }
         />
 
-        {/* 🛒 CART */}
         <Route
           path="/cart"
           element={
@@ -72,7 +75,6 @@ export default function App() {
           }
         />
 
-        {/* 💳 CHECKOUT */}
         <Route
           path="/checkout"
           element={
@@ -82,7 +84,6 @@ export default function App() {
           }
         />
 
-        {/* ❤️ FAVORITES */}
         <Route
           path="/favorites"
           element={
@@ -92,17 +93,6 @@ export default function App() {
           }
         />
 
-        {/* 🎉 ORDER SUCCESS */}
-        <Route
-          path="/order-success"
-          element={
-            <PrivateRoute>
-              <OrderSuccess />
-            </PrivateRoute>
-          }
-        />
-
-        {/* 🔥 OFFERS */}
         <Route
           path="/offers"
           element={
@@ -112,9 +102,26 @@ export default function App() {
           }
         />
 
-        {/* ❌ FALLBACK */}
+        <Route
+          path="/order-success"
+          element={
+            <PrivateRoute>
+              <OrderSuccess />
+            </PrivateRoute>
+          }
+        />
+
+        {/* FALLBACK */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
+    </>
+  );
+}
+
+export default function App() {
+  return (
+    <BrowserRouter>
+      <Layout />
     </BrowserRouter>
   );
 }
