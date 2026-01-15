@@ -13,6 +13,7 @@ import { useCart } from "../context/CartContext";
 import { useFavorite } from "../context/FavoriteContext";
 import Toast from "../components/Toast";
 import "../styles/productDetail.css";
+import QuantitySelector from "../components/QuantitySelector";
 
 /* ================= MOCK DATA ================= */
 const images = [
@@ -193,12 +194,8 @@ export default function ProductDetail() {
           {/* QTY */}
           <div className="pd-option">
             <label>Quantity</label>
-            <input
-              type="number"
-              min="1"
-              value={qty}
-              onChange={(e) => setQty(Number(e.target.value))}
-            />
+            <QuantitySelector value={qty} onChange={setQty} />
+
           </div>
 
           {/* ACTIONS */}
