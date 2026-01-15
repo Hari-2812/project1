@@ -1,0 +1,61 @@
+.success-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.success-card {
+  background: rgba(255,255,255,0.15);
+  backdrop-filter: blur(20px);
+  border-radius: 26px;
+  padding: 50px 40px;
+  text-align: center;
+  animation: popIn 0.6s ease;
+}
+
+.success-check {
+  width: 90px;
+  height: 90px;
+  margin: auto;
+  border-radius: 50%;
+  background: linear-gradient(135deg,#00ff9c,#00c6ff);
+  color: white;
+  font-size: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: bounce 1.2s infinite;
+}
+
+.success-card h1 {
+  margin-top: 20px;
+  font-size: 26px;
+}
+
+.success-info {
+  margin: 20px 0;
+  font-size: 15px;
+}
+
+.success-card button {
+  margin-top: 20px;
+  padding: 16px 28px;
+  border-radius: 18px;
+  border: none;
+  background: linear-gradient(135deg,#00c6ff,#0072ff);
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* ANIMATIONS */
+@keyframes popIn {
+  from { transform: scale(0.6); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+@keyframes bounce {
+  0%,100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}

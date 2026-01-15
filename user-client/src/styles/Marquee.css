@@ -1,0 +1,54 @@
+.mini-marquee {
+  width: 100%;
+  overflow: hidden;
+
+  background: linear-gradient(
+    135deg,
+    rgba(0, 198, 255, 0.12),
+    rgba(102, 224, 255, 0.05)
+  );
+
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.mini-track {
+  display: flex;
+  gap: 50px;
+  width: max-content;
+  padding: 10px 0;
+
+  animation: miniScroll 25s linear infinite;
+}
+
+.mini-track span {
+  white-space: nowrap;
+
+  font-family: "Inter", sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+
+  color: rgba(255, 255, 255, 0.9);
+  letter-spacing: 0.3px;
+}
+
+/* subtle hover for premium feel */
+.mini-track span:hover {
+  color: #66e0ff;
+}
+
+/* animation */
+@keyframes miniScroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+/* mobile */
+@media (max-width: 768px) {
+  .mini-track span {
+    font-size: 13px;
+  }
+}
