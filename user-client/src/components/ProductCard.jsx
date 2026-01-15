@@ -1,12 +1,8 @@
-import {
-  FaHeart,
-  FaRegHeart,
-  FaStar,
-  FaShoppingCart,
-} from "react-icons/fa";
+import { FaHeart, FaRegHeart, FaStar, FaShoppingCart } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { useFavorite } from "../context/FavoriteContext";
 import { useCart } from "../context/CartContext";
+import "../styles/ProductCard.css";
 
 export default function ProductCard({ product }) {
   const navigate = useNavigate();
@@ -52,16 +48,23 @@ export default function ProductCard({ product }) {
         <p className="price">₹{product.price}</p>
 
         <div className="card-actions">
+          <button
+            className="buy-now"
+            onClick={(e) => {
+              e.stopPropagation();
+              addToCart({ ...product, qty: 1, size: "M" });
+              navigate("/checkout");
+            }}
+          >
+            Buy Now
+          </button>
+
           <button className="add-cart" onClick={handleAddToCart}>
             <FaShoppingCart /> Add
           </button>
 
           <button className="fav-btn" onClick={toggleFavorite}>
-            {isFav ? (
-              <FaHeart style={{ color: "#ff5e7e" }} />
-            ) : (
-              <FaRegHeart />
-            )}
+            {isFav ? <FaHeart style={{ color: "#ff5e7e" }} /> : <FaRegHeart />}
           </button>
         </div>
       </div>

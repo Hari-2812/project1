@@ -1,0 +1,68 @@
+.new-arrivals {
+  padding: 80px 40px;
+  background: #0f2027;
+  font-family: "Inter", sans-serif;
+}
+
+.new-arrivals h2 {
+  text-align: center;
+  font-size: 32px;
+  margin-bottom: 30px;
+  background: linear-gradient(135deg, #00c6ff, #66e0ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Tabs */
+.collection-tabs {
+  display: flex;
+  justify-content: center;
+  gap: 18px;
+  margin-bottom: 40px;
+}
+
+.collection-tabs button {
+  padding: 12px 26px;
+  border-radius: 30px;
+  border: none;
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.12);
+  color: white;
+  font-weight: 600;
+  backdrop-filter: blur(10px);
+  transition: 0.3s ease;
+}
+
+.collection-tabs button:hover {
+  background: rgba(0, 198, 255, 0.3);
+}
+
+.collection-tabs .active {
+  background: linear-gradient(135deg, #00c6ff, #66e0ff);
+  color: #002b4f;
+}
+
+/* Grid */
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 28px;
+}
+
+@media (max-width: 1000px) {
+  .product-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 700px) {
+  .product-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 450px) {
+  .product-grid {
+    grid-template-columns: 1fr;
+  }
+}
