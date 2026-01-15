@@ -1,0 +1,9 @@
+import axios from "axios";
+
+const API = "http://localhost:5000/api/offers"; 
+// ⬆️ change if your backend URL is different
+
+export const getOffers = async () => {
+  const res = await axios.get(API);
+  return res.data;
+};

@@ -1,49 +1,70 @@
-import { useMemo } from "react"; // Added for performance
+import { useMemo } from "react";
 import { Link } from "react-router-dom";
-import { FaShoppingCart, FaHeart, FaUser } from "react-icons/fa"; // Grouped icons
+import { FaShoppingCart, FaHeart, FaUser } from "react-icons/fa";
+
 import { useCart } from "../context/CartContext";
-import { useNavigate } from "react-router-dom";
+import { useFavorite } from "../context/FavoriteContext";
+
 import "../styles/Header.css";
 
 export default function Header() {
   const { cart } = useCart();
-  const navigate = useNavigate();
-  // ✅ EFFICIENT: Only recalculates if 'cart' changes
+  const { favorites } = useFavorite();
+
+  /* ======================
+     CART COUNT
+  ====================== */
   const totalQty = useMemo(() => {
     return Array.isArray(cart)
       ? cart.reduce((sum, item) => sum + item.qty, 0)
       : 0;
   }, [cart]);
 
-  const handleCheckout = () => {
-    navigate("/home");
-  };
+  /* ======================
+     FAVORITES COUNT
+  ====================== */
+  const totalFav = useMemo(() => {
+    return Array.isArray(favorites) ? favorites.length : 0;
+  }, [favorites]);
 
+  /* ======================
+     UI
+  ====================== */
   return (
     <header className="header">
-      {/* ✅ Fixed class name to match CSS */}
-      <h2 className="header-logo"  onClick={handleCheckout}>
-        KidsStore<span>.</span>
-      </h2>
+      {/* LOGO */}
+      <Link to="/home" className="header-logo">
+        Kids<span>Store</span>
+      </Link>
 
+      {/* SEARCH */}
       <div className="search-box">
         <input
           type="text"
           placeholder="Search for kids wear..."
-          aria-label="Search"
+          aria-label="Search products"
         />
       </div>
 
+      {/* RIGHT ICONS */}
       <div className="header-right">
+        {/* FAVORITES */}
+        <Link to="/favorites" className="cart-icon" title="Favorites">
+          <FaHeart />
+          {totalFav > 0 && (
+            <span className="cart-badge">{totalFav}</span>
+          )}
+        </Link>
+
+        {/* CART */}
         <Link to="/cart" className="cart-icon" title="Cart">
           <FaShoppingCart />
-          {totalQty > 0 && <span className="cart-badge">{totalQty}</span>}
+          {totalQty > 0 && (
+            <span className="cart-badge">{totalQty}</span>
+          )}
         </Link>
 
-        <Link to="/wishlist" className="icon-btn" title="Wishlist">
-          <FaHeart />
-        </Link>
-
+        {/* PROFILE */}
         <Link to="/profile" className="icon-btn" title="Profile">
           <FaUser />
         </Link>
