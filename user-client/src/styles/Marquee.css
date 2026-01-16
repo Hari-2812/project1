@@ -18,6 +18,7 @@
   padding: 10px 0;
 
   animation: miniScroll 25s linear infinite;
+  cursor: pointer;
 }
 
 .mini-track span {
