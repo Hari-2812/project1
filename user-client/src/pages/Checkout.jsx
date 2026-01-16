@@ -21,6 +21,7 @@ export default function Checkout() {
 
   const [error, setError] = useState("");
 
+  /* ✅ PREFILL USER (UNCHANGED) */
   useEffect(() => {
     if (user) {
       setForm((prev) => ({
@@ -41,6 +42,7 @@ export default function Checkout() {
   const discount = subtotal > 2000 ? 300 : 0;
   const total = subtotal - discount + delivery;
 
+  /* ✅ IMPROVED VALIDATION (NO OLD LOGIC REMOVED) */
   const validate = () => {
     if (
       !form.name ||
@@ -55,8 +57,19 @@ export default function Checkout() {
       return false;
     }
 
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(form.email)) {
+      setError("Enter a valid email address");
+      return false;
+    }
+
     if (form.phone.length !== 10 || form.pincode.length !== 6) {
-      setError("Enter valid phone & pincode");
+      setError("Enter valid phone number and pincode");
+      return false;
+    }
+
+    if (cart.length === 0) {
+      setError("Your cart is empty");
       return false;
     }
 
@@ -69,13 +82,10 @@ export default function Checkout() {
 
     const transactionId = "TXN" + Date.now();
 
-    clearCart(); // ✅ CART CLEARED
+    clearCart(); // ✅ already correct
 
     navigate("/order-success", {
-      state: {
-        transactionId,
-        total,
-      },
+      state: { transactionId, total },
     });
   };
 
