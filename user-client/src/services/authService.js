@@ -18,10 +18,10 @@ export const registerUser = async (data) => {
   try {
     const res = await fetch(`${API}/register`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json' },Authorization: `Bearer ${localStorage.getItem("token")}`,
       body: JSON.stringify(data)
     })
-
+    
     return await res.json()
   } catch (error) {
     return { message: 'Network error. Please try again.' }
