@@ -5,6 +5,7 @@
   overflow: hidden;
   margin-bottom: 40px;
   background-color: #1a1a1a;
+  cursor: pointer;
 }
 
 .hero-swiper {

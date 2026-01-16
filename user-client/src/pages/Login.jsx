@@ -9,9 +9,9 @@ export default function Login() {
   const [password, setPassword] = useState('')
   const [show, setShow] = useState(false)
   const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
 
-  /* ✅ ADDED VALIDATION (NO OLD CODE REMOVED) */
   const validate = () => {
     if (!email || !password) {
       setError('Email and password are required')
@@ -35,52 +35,25 @@ export default function Login() {
 
   const submit = async (e) => {
     e.preventDefault()
-
-    /* ✅ VALIDATION CHECK */
     if (!validate()) return
 
-    const res = await loginUser({ email, password })
-    if (res.token) {
-      localStorage.setItem('token', res.token)
-
-      /* ✅ OPTIONAL BUT SAFE */
-      if (res.user) {
-        localStorage.setItem('user', JSON.stringify(res.user))
-      }
-
-      navigate('/home')
-    } else {
-      setError(res.message || 'Login failed')
-    }
-  }
-
-  const googleLogin = async () => {
     try {
-      const firebaseToken = await loginWithGoogle()
+      setLoading(true)
+      const res = await loginUser({ email, password })
 
-      const res = await fetch(
-        'http://localhost:5000/api/auth/google-login',
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ token: firebaseToken }),
+      if (res.token) {
+        localStorage.setItem('token', res.token)
+        if (res.user) {
+          localStorage.setItem('user', JSON.stringify(res.user))
         }
-      )
-
-      const data = await res.json()
-
-      if (data.token) {
-        localStorage.setItem('token', data.token)
-
-        if (data.user) {
-          localStorage.setItem('user', JSON.stringify(data.user))
-        }
-
         navigate('/home')
+      } else {
+        setError(res.message || 'Login failed')
       }
-    } catch (err) {
-      console.error(err)
-      setError('Google login failed')
+    } catch {
+      setError('Something went wrong')
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -107,36 +80,15 @@ export default function Login() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
-            <span
-              className="eye"
-              onClick={() => setShow(!show)}
-              title={show ? 'Hide password' : 'Show password'}
-            >
+            <span className="eye" onClick={() => setShow(!show)}>
               {show ? '👁️' : '🙈'}
             </span>
           </div>
 
-          <button className="primary-btn">Login</button>
+          <button className="primary-btn" disabled={loading}>
+            {loading ? 'Logging in...' : 'Login'}
+          </button>
         </form>
-
-        <p className="link" onClick={() => navigate('/forgot')}>
-          Forgot password?
-        </p>
-
-        <div className="divider">OR</div>
-
-        <button className="google-btn" onClick={googleLogin}>
-          <img
-            src="https://developers.google.com/identity/images/g-logo.png"
-            alt="Google"
-          />
-          Continue with Google
-        </button>
-
-        <p className="switch">
-          Don’t have an account?
-          <span onClick={() => navigate('/register')}> Register</span>
-        </p>
       </div>
     </div>
   )
