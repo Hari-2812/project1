@@ -14,6 +14,8 @@ const app = express()
 app.use(cors())
 app.use(express.json())
 app.use("/api/offers", offerRoutes)
+app.use("/api/auth", authRoutes)
+app.use("/api/offers", offerRoutes)
 
 /* Test env */
 console.log('Mongo URI exists:', !!process.env.MONGO_URI)

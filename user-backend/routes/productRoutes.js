@@ -1,17 +1,12 @@
-import express from 'express'
-import Product from '../models/Product.js'
+import express from "express";
+import { getProducts, addProduct, bulkAddProducts } from "../controllers/productController.js";
+import { protect } from "../middleware/authMiddleware.js";
+import { adminOnly } from "../middleware/adminMiddleware.js";
 
-const router = express.Router()
+const router = express.Router();
 
-// GET PRODUCT BY ID
-router.get('/:id', async (req, res) => {
-  try {
-    const product = await Product.findById(req.params.id)
-    if (!product) return res.status(404).json({ message: 'Not found' })
-    res.json(product)
-  } catch (err) {
-    res.status(500).json({ message: 'Server error' })
-  }
-})
+router.get("/", getProducts);
+router.post("/", protect, adminOnly, addProduct);
+router.post("/bulk", protect, adminOnly, bulkAddProducts);
 
-export default router
+export default router;
