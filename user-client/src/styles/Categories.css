@@ -1,100 +1,92 @@
-.categories {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 30px;
-
-  padding: 80px 40px; /* same as header spacing */
-  background: #0f2027;
-}
-
-/* Card */
-.category-card {
-  position: relative;
-  height: 420px;
-  border-radius: 24px;
-  overflow: hidden;
-  cursor: pointer;
-
-  background-size: cover;
-  background-position: center;
-
-  transition: 0.3s ease;
-}
-
-/* Images */
-.category-card.boys {
-  background-image: url("https://images.pexels.com/photos/3662647/pexels-photo-3662647.jpeg?auto=compress&cs=tinysrgb&w=1200");
-}
-
-.category-card.girls {
-  background-image: url("https://images.pexels.com/photos/3662667/pexels-photo-3662667.jpeg?auto=compress&cs=tinysrgb&w=1200");
-}
-
-/* Glass overlay */
-.category-overlay {
-  position: absolute;
-  inset: 0;
-
-  background: linear-gradient(
-    to top,
-    rgba(15, 32, 39, 0.85),
-    rgba(15, 32, 39, 0.25)
-  );
-
-  backdrop-filter: blur(6px);
-
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  padding: 40px;
-}
-
-/* Title */
-.category-overlay h2 {
-  font-size: 48px;
-  font-weight: 700;
+.categories { 
+  display: grid; 
+  grid-template-columns: 1fr 1fr; 
+  gap: 30px; 
+ 
+  padding: 80px 40px; /* same as header spacing */ 
+  background: #0f2027; 
+} 
+ 
+/* Card */ 
+.category-card { 
+  position: relative; 
+  height: 420px; 
+  border-radius: 24px; 
+  overflow: hidden; 
+  cursor: pointer; 
+ 
+  background-size: cover; 
+  background-position: center; 
+ 
+  transition: 0.3s ease; 
+} 
+ 
+/* Images */ 
+.category-card.boys { 
+  background-image: url("https://images.pexels.com/photos/3662647/pexels-photo-3662647.jpeg?auto=compress&cs=tinysrgb&w=1200"); 
+} 
+ 
+.category-card.girls { 
+  background-image: url("https://images.pexels.com/photos/3662667/pexels-photo-3662667.jpeg?auto=compress&cs=tinysrgb&w=1200"); 
+} 
+ 
+/* Hover overlay */ 
+.hover-overlay { 
+  position: absolute; 
+  inset: 0; 
+ 
+  background: rgba(0, 0, 0, 0.5); 
+  opacity: 0;
+ 
+  display: flex; 
+  justify-content: center; 
+  align-items: center;
+  
+  transition: opacity 0.3s ease;
+} 
+ 
+/* Title */ 
+.hover-overlay h2 { 
+  font-size: 48px; 
+  font-weight: 700; 
   color: white;
-  margin-bottom: 12px;
+  margin-right: 12px;
+} 
+ 
+/* Arrow */ 
+.hover-overlay .arrow { 
+  font-size: 36px;
+  color: white;
+  font-weight: 300;
+  transition: transform 0.3s ease;
+} 
+ 
+/* Hover effects */ 
+.category-card:hover .hover-overlay { 
+  opacity: 1;
+} 
+ 
+.category-card:hover .arrow { 
+  transform: translateX(10px);
 }
-
-/* Button */
-.category-overlay button {
-  width: fit-content;
-  padding: 12px 26px;
-  border-radius: 30px;
-  border: none;
-  cursor: pointer;
-
-  background: linear-gradient(135deg, #00c6ff, #66e0ff);
-  color: #002b4f;
-  font-weight: 600;
-  font-size: 15px;
-
-  transition: 0.25s ease;
-}
-
-/* Hover effects */
-.category-card:hover {
-  transform: scale(1.01);
-}
-
-.category-overlay button:hover {
-  opacity: 0.9;
-}
-
-/* Mobile */
-@media (max-width: 900px) {
-  .categories {
-    grid-template-columns: 1fr;
-    gap: 20px;
-    padding: 60px 20px;
+ 
+/* Mobile */ 
+@media (max-width: 900px) { 
+  .categories { 
+    grid-template-columns: 1fr; 
+    gap: 20px; 
+    padding: 60px 20px; 
+  } 
+ 
+  .category-card { 
+    height: 320px; 
+  } 
+ 
+  .hover-overlay h2 { 
+    font-size: 36px; 
   }
-
-  .category-card {
-    height: 320px;
-  }
-
-  .category-overlay h2 {
-    font-size: 36px;
+  
+  .hover-overlay .arrow {
+    font-size: 28px;
   }
 }
