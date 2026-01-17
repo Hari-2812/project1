@@ -5,14 +5,37 @@ import '../styles/Register.css'
 
 export default function Register() {
   const [form, setForm] = useState({ name:'', email:'', password:'' })
+  const [error, setError] = useState('')
   const navigate = useNavigate()
 
   const strength = (p) =>
     [/.{8,}/, /[A-Z]/, /\d/, /\W/].filter(r => r.test(p)).length
 
   const submit = async () => {
+    if (!form.name || !form.email || !form.password) {
+      setError('All fields are required')
+      return
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(form.email)) {
+      setError('Enter a valid email')
+      return
+    }
+
+    if (strength(form.password) < 3) {
+      setError('Password is too weak')
+      return
+    }
+
+    setError('')
     const res = await registerUser(form)
-    if (res.message === 'User created') navigate('/')
+
+    if (res.message === 'User created') {
+      navigate('/')
+    } else {
+      setError(res.message || 'Registration failed')
+    }
   }
 
   return (
@@ -20,6 +43,8 @@ export default function Register() {
       <div className="register-box">
         <h2>Create Account</h2>
         <p className="subtitle">Join us in less than a minute</p>
+
+        {error && <p className="login-error">{error}</p>}
 
         <input
           placeholder="Full Name"

@@ -1,19 +1,29 @@
 const API = 'http://localhost:5000/api/auth'
 
 export const loginUser = async (data) => {
-  const res = await fetch(`${API}/login`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(data)
-  })
-  return res.json()
+  try {
+    const res = await fetch(`${API}/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    })
+
+    return await res.json()
+  } catch (error) {
+    return { message: 'Network error. Please try again.' }
+  }
 }
 
 export const registerUser = async (data) => {
-  const res = await fetch(`${API}/register`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(data)
-  })
-  return res.json()
+  try {
+    const res = await fetch(`${API}/register`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },Authorization: `Bearer ${localStorage.getItem("token")}`,
+      body: JSON.stringify(data)
+    })
+    
+    return await res.json()
+  } catch (error) {
+    return { message: 'Network error. Please try again.' }
+  }
 }
