@@ -2,6 +2,7 @@ import { FaTrashAlt, FaPlus, FaMinus } from "react-icons/fa";
 import { useCart } from "../context/CartContext";
 import { useNavigate } from "react-router-dom";
 import "../styles/cart.css";
+import QuantitySelector from "../components/QuantitySelector";
 
 export default function Cart() {
   const navigate = useNavigate();
@@ -47,25 +48,13 @@ export default function Cart() {
           </div>
 
           {/* QUANTITY */}
-          <div className="qty-controls">
-            <button
-              onClick={() =>
-                updateQty(item._id, item.size, Math.max(1, item.qty - 1))
-              }
-            >
-              <FaMinus />
-            </button>
+          <QuantitySelector
+            value={item.qty}
+            onChange={(newQty) =>
+              updateQty(item._id, item.size, newQty)
+            }
+          />
 
-            <span>{item.qty}</span>
-
-            <button
-              onClick={() =>
-                updateQty(item._id, item.size, item.qty + 1)
-              }
-            >
-              <FaPlus />
-            </button>
-          </div>
 
           {/* ITEM TOTAL */}
           <div className="item-total">

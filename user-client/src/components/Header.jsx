@@ -4,6 +4,7 @@ import { FaShoppingCart, FaHeart, FaUser } from "react-icons/fa";
 
 import { useCart } from "../context/CartContext";
 import { useFavorite } from "../context/FavoriteContext";
+
 import "../styles/Header.css";
 import SearchBox from "./SearchBox";
 
@@ -12,7 +13,7 @@ export default function Header() {
   const { favorites } = useFavorite();
 
   /* ======================
-     CALCULATIONS
+     CART COUNT
   ====================== */
   const totalQty = useMemo(() => {
     return Array.isArray(cart)
@@ -20,6 +21,9 @@ export default function Header() {
       : 0;
   }, [cart]);
 
+  /* ======================
+     FAVORITES COUNT
+  ====================== */
   const totalFav = useMemo(() => {
     return Array.isArray(favorites) ? favorites.length : 0;
   }, [favorites]);
@@ -40,15 +44,15 @@ export default function Header() {
       {/* RIGHT ICONS */}
       <div className="header-right">
         {/* FAVORITES */}
-        <Link to="/favorites" className="cart-icon">
+        <Link to="/favorites" className="cart-icon" title="Favorites">
           <FaHeart />
-          {favorites.length > 0 && (
-            <span className="cart-badge">{favorites.length}</span>
+          {totalFav > 0 && (
+            <span className="cart-badge">{totalFav}</span>
           )}
         </Link>
 
         {/* CART */}
-        <Link to="/cart" className="cart-icon">
+        <Link to="/cart" className="cart-icon" title="Cart">
           <FaShoppingCart />
           {totalQty > 0 && (
             <span className="cart-badge">{totalQty}</span>

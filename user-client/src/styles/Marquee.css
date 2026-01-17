@@ -18,6 +18,7 @@
   padding: 10px 0;
 
   animation: miniScroll 25s linear infinite;
+  cursor: pointer;
 }
 
 .mini-track span {
@@ -29,6 +30,14 @@
 
   color: rgba(255, 255, 255, 0.9);
   letter-spacing: 0.3px;
+}
+
+.mini-marquee {
+  cursor: pointer;
+}
+
+.mini-marquee:hover {
+  filter: brightness(1.1);
 }
 
 /* subtle hover for premium feel */
