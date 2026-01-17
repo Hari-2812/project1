@@ -7,16 +7,16 @@ export default function Categories() {
   return (
     <section className="categories">
       <div className="category-card boys" onClick={() => navigate("/boys")}>
-        <div className="category-overlay">
+        <div className="hover-overlay">
           <h2>Boys</h2>
-          <button>Shop Boys →</button>
+          <span className="arrow">→</span>
         </div>
       </div>
 
       <div className="category-card girls" onClick={() => navigate("/girls")}>
-        <div className="category-overlay">
+        <div className="hover-overlay">
           <h2>Girls</h2>
-          <button>Shop Girls →</button>
+          <span className="arrow">→</span>
         </div>
       </div>
     </section>
