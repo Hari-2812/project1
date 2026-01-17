@@ -78,13 +78,10 @@ export default function ProductDetail() {
   });
 
   /* IMAGE SLIDER */
-  const nextImg = () =>
-    setActiveImg((prev) => (prev + 1) % images.length);
+  const nextImg = () => setActiveImg((prev) => (prev + 1) % images.length);
 
   const prevImg = () =>
-    setActiveImg((prev) =>
-      prev === 0 ? images.length - 1 : prev - 1
-    );
+    setActiveImg((prev) => (prev === 0 ? images.length - 1 : prev - 1));
 
   /* ADD TO CART */
   const handleAddToCart = () => {
@@ -147,10 +144,7 @@ export default function ProductDetail() {
           <div className="pd-title-row">
             <h1 className="pd-title">{product.name}</h1>
 
-            <span
-              className="pd-fav"
-              onClick={() => toggleFavorite(product)}
-            >
+            <span className="pd-fav" onClick={() => toggleFavorite(product)}>
               {isFavorite(product._id) ? <FaHeart /> : <FaRegHeart />}
             </span>
           </div>
@@ -158,14 +152,17 @@ export default function ProductDetail() {
           <p className="pd-price">₹{product.price}</p>
 
           <div className="pd-rating">
-            <FaStar /><FaStar /><FaStar /><FaStar />
+            <FaStar />
+            <FaStar />
+            <FaStar />
+            <FaStar />
             <FaStar className="dim" />
             <span>4.5 (128 reviews)</span>
           </div>
 
           <p className="pd-desc">
-            Premium cotton t-shirt designed especially for kids.
-            Ultra-soft, breathable, and skin-friendly for all-day comfort.
+            Premium cotton t-shirt designed especially for kids. Ultra-soft,
+            breathable, and skin-friendly for all-day comfort.
           </p>
 
           <ul className="pd-highlights">
@@ -195,7 +192,6 @@ export default function ProductDetail() {
           <div className="pd-option">
             <label>Quantity</label>
             <QuantitySelector value={qty} onChange={setQty} />
-
           </div>
 
           {/* ACTIONS */}
@@ -268,9 +264,7 @@ export default function ProductDetail() {
 
               <button
                 className="pd-related-cart"
-                onClick={() =>
-                  addToCart({ ...p, qty: 1, size: "M" })
-                }
+                onClick={() => addToCart({ ...p, qty: 1, size: "M" })}
               >
                 <FaShoppingCart /> Add to Cart
               </button>

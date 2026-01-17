@@ -1,4 +1,10 @@
-import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  Navigate,
+  useLocation,
+} from "react-router-dom";
 
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -13,6 +19,7 @@ import OrderSuccess from "./pages/Order";
 import Boys from "./pages/BoysProducts"; // ✅ ADDED
 
 import Header from "./components/Header";
+import Footer from "./components/Footer";
 
 /* 🔐 Private Route */
 const PrivateRoute = ({ children }) => {
@@ -24,13 +31,15 @@ const PrivateRoute = ({ children }) => {
 function Layout() {
   const location = useLocation();
 
-  const hideHeaderRoutes = ["/", "/register", "/forgot"];
-  const shouldHideHeader = hideHeaderRoutes.includes(location.pathname);
+  const hideLayoutRoutes = ["/", "/register", "/forgot"];
+  const shouldHideLayout = hideLayoutRoutes.includes(location.pathname);
 
   return (
     <>
-      {!shouldHideHeader && <Header />}
+      {/* HEADER */}
+      {!shouldHideLayout && <Header />}
 
+      {/* ROUTES */}
       <Routes>
         {/* PUBLIC */}
         <Route path="/" element={<Login />} />
@@ -47,7 +56,6 @@ function Layout() {
           }
         />
 
-        {/* ✅ BOYS PAGE */}
         <Route
           path="/boys"
           element={
@@ -111,9 +119,11 @@ function Layout() {
           }
         />
 
-        {/* FALLBACK */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
+
+      {/* FOOTER */}
+      {!shouldHideLayout && <Footer showNewsletter={true} />}
     </>
   );
 }
