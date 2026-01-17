@@ -29,6 +29,39 @@
 }
 
 /* ======================
+   MENU BUTTON (MOBILE)
+====================== */
+.menu-btn {
+  display: none;
+  width: 40px;
+  height: 40px;
+  
+  align-items: center;
+  justify-content: center;
+  
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  border-radius: 10px;
+  
+  color: white;
+  font-size: 20px;
+  
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.menu-btn:hover {
+  background: linear-gradient(135deg, #00c6ff, #66e0ff);
+  color: #002b4f;
+  transform: scale(1.05);
+  box-shadow: 0 4px 16px rgba(0, 198, 255, 0.4);
+}
+
+.menu-btn:active {
+  transform: scale(0.95);
+}
+
+/* ======================
    LOGO
 ====================== */
 .header-logo {
@@ -37,6 +70,7 @@
   color: #ffffff;
   letter-spacing: 0.5px;
   cursor: pointer;
+  padding: 20px;
 }
 
 .header-logo span {
@@ -157,6 +191,7 @@
 @media (max-width: 768px) {
   .header {
     padding: 14px 20px;
+    justify-content: space-between;
   }
 
   .search-box {
@@ -167,7 +202,16 @@
     font-size: 20px;
   }
 
+  .menu-btn {
+    display: flex;
+    order: -1;
+  }
+  
   .cart-icon {
     font-size: 20px;
+  }
+
+  .icon-btn {
+    display: none; /* profile moves to sidebar */
   }
 }

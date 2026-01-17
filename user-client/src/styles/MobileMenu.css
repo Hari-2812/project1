@@ -1,0 +1,219 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+
+/* ======================
+   OVERLAY
+====================== */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  z-index: 999;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* ======================
+   MOBILE MENU
+====================== */
+.mobile-menu {
+  position: fixed;
+  top: 0;
+  left: -100%;
+  width: 280px;
+  height: 100vh;
+  
+  font-family: "Inter", sans-serif;
+  
+  /* Premium Glass Effect */
+  background: linear-gradient(
+    180deg,
+    rgba(30, 60, 114, 0.95),
+    rgba(15, 32, 39, 0.95)
+  );
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  
+  border-right: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 10px 0 40px rgba(0, 0, 0, 0.5);
+  
+  padding: 24px;
+  transition: left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 1000;
+  
+  overflow-y: auto;
+}
+
+.mobile-menu.open {
+  left: 0;
+}
+
+/* ======================
+   CLOSE BUTTON
+====================== */
+.close-btn {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  
+  width: 40px;
+  height: 40px;
+  
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  background: rgba(255, 255, 255, 0.08);
+  border: none;
+  border-radius: 50%;
+  
+  color: white;
+  font-size: 24px;
+  font-weight: 300;
+  line-height: 1;
+  
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.close-btn:hover {
+  background: linear-gradient(135deg, #00c6ff, #66e0ff);
+  color: #002b4f;
+  transform: rotate(90deg) scale(1.05);
+  box-shadow: 0 4px 16px rgba(0, 198, 255, 0.4);
+}
+
+/* ======================
+   SEARCH BOX IN MENU
+====================== */
+.mobile-menu .search-box {
+  margin: 60px 0 30px 0;
+  max-width: 100%;
+}
+
+.mobile-menu .search-box input {
+  width: 100%;
+  padding: 12px 18px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  font-size: 14px;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+.mobile-menu .search-box input:focus {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: #00c6ff;
+  box-shadow: 0 0 0 3px rgba(0, 198, 255, 0.1);
+}
+
+.mobile-menu .search-box input::placeholder {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+/* ======================
+   NAVIGATION
+====================== */
+.mobile-menu nav {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 20px;
+}
+
+.mobile-menu nav a {
+  position: relative;
+  padding: 14px 16px;
+  
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 16px;
+  font-weight: 500;
+  text-decoration: none;
+  
+  border-radius: 10px;
+  background: transparent;
+  
+  transition: all 0.3s ease;
+  
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.mobile-menu nav a::before {
+  content: "";
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #00c6ff;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.mobile-menu nav a:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  transform: translateX(4px);
+}
+
+.mobile-menu nav a:hover::before {
+  opacity: 1;
+}
+
+.mobile-menu nav a:active {
+  background: rgba(0, 198, 255, 0.2);
+}
+
+/* ======================
+   DIVIDER
+====================== */
+.mobile-menu nav::after {
+  content: "";
+  margin: 12px 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
+}
+
+/* ======================
+   SCROLLBAR STYLING
+====================== */
+.mobile-menu::-webkit-scrollbar {
+  width: 6px;
+}
+
+.mobile-menu::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.mobile-menu::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+}
+
+.mobile-menu::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* ======================
+   RESPONSIVE
+====================== */
+@media (max-width: 480px) {
+  .mobile-menu {
+    width: 260px;
+  }
+}

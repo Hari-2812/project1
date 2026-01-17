@@ -4,6 +4,11 @@ import { FaShoppingCart, FaHeart, FaUser } from "react-icons/fa";
 
 import { useCart } from "../context/CartContext";
 import { useFavorite } from "../context/FavoriteContext";
+import { FaBars } from "react-icons/fa";
+import { useState } from "react";
+import { useEffect } from "react";
+
+import MobileMenu from "./MobileMenu";
 
 import "../styles/Header.css";
 import SearchBox from "./SearchBox";
@@ -11,6 +16,11 @@ import SearchBox from "./SearchBox";
 export default function Header() {
   const { cart } = useCart();
   const { favorites } = useFavorite();
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  useEffect(() => {
+    document.body.style.overflow = menuOpen ? "hidden" : "auto";
+  }, [menuOpen]);
 
   /* ======================
      CART COUNT
@@ -32,38 +42,37 @@ export default function Header() {
      UI
   ====================== */
   return (
-    <header className="header">
-      {/* LOGO */}
-      <Link to="/home" className="header-logo">
-        Kids<span>Store</span>
-      </Link>
+    <>
+      <header className="header">
+        <button className="menu-btn" onClick={() => setMenuOpen(true)}>
+          <FaBars />
+        </button>
 
-      {/* SEARCH */}
-      <SearchBox />
-      
-      {/* RIGHT ICONS */}
-      <div className="header-right">
-        {/* FAVORITES */}
-        <Link to="/favorites" className="cart-icon" title="Favorites">
-          <FaHeart />
-          {totalFav > 0 && (
-            <span className="cart-badge">{totalFav}</span>
-          )}
+        <Link to="/home" className="header-logo">
+          Kids<span>Store</span>
         </Link>
 
-        {/* CART */}
-        <Link to="/cart" className="cart-icon" title="Cart">
-          <FaShoppingCart />
-          {totalQty > 0 && (
-            <span className="cart-badge">{totalQty}</span>
-          )}
-        </Link>
+        <SearchBox />
 
-        {/* PROFILE */}
-        <Link to="/profile" className="icon-btn" title="Profile">
-          <FaUser />
-        </Link>
-      </div>
-    </header>
+        <div className="header-right">
+          <Link to="/favorites" className="cart-icon">
+            <FaHeart />
+            {totalFav > 0 && <span className="cart-badge">{totalFav}</span>}
+          </Link>
+
+          <Link to="/cart" className="cart-icon">
+            <FaShoppingCart />
+            {totalQty > 0 && <span className="cart-badge">{totalQty}</span>}
+          </Link>
+
+          <Link to="/profile" className="icon-btn">
+            <FaUser />
+          </Link>
+        </div>
+      </header>
+
+      {/* ✅ MOBILE SIDEBAR */}
+      <MobileMenu open={menuOpen} onClose={() => setMenuOpen(false)} />
+    </>
   );
 }
