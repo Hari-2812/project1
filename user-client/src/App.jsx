@@ -17,6 +17,7 @@ import Favorites from "./pages/Favorites";
 import Offers from "./pages/Offers";
 import OrderSuccess from "./pages/Order";
 import Boys from "./pages/BoysProducts"; // ✅ ADDED
+import GirlsProducts from "./pages/GirlsProducts";
 
 import Header from "./components/Header";
 import Footer from "./components/Footer";
@@ -61,6 +62,15 @@ function Layout() {
           element={
             <PrivateRoute>
               <Boys />
+            </PrivateRoute>
+          }
+        />
+
+        <Route
+          path="/girls"
+          element={
+            <PrivateRoute>
+              <GirlsProducts />
             </PrivateRoute>
           }
         />
