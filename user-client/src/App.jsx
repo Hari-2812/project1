@@ -16,7 +16,7 @@ import Checkout from "./pages/Checkout";
 import Favorites from "./pages/Favorites";
 import Offers from "./pages/Offers";
 import OrderSuccess from "./pages/Order";
-import Boys from "./pages/BoysProducts"; // ✅ ADDED
+import Boys from "./pages/BoysProducts";
 import GirlsProducts from "./pages/GirlsProducts";
 
 import Header from "./components/Header";
@@ -28,7 +28,7 @@ const PrivateRoute = ({ children }) => {
   return token ? children : <Navigate to="/" replace />;
 };
 
-/* 🔹 Wrapper to control Header visibility */
+/* Layout */
 function Layout() {
   const location = useLocation();
 
@@ -37,10 +37,8 @@ function Layout() {
 
   return (
     <>
-      {/* HEADER */}
       {!shouldHideLayout && <Header />}
 
-      {/* ROUTES */}
       <Routes>
         {/* PUBLIC */}
         <Route path="/" element={<Login />} />
@@ -129,10 +127,10 @@ function Layout() {
           }
         />
 
+        {/* FALLBACK */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
 
-      {/* FOOTER */}
       {!shouldHideLayout && <Footer showNewsletter={true} />}
     </>
   );
