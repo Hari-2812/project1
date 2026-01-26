@@ -1,0 +1,58 @@
+/* =========================
+   PAGE LAYOUT
+========================= */
+.girls-page {
+  padding: 30px 40px;
+  background: #fff6fa;
+  min-height: 100vh;
+}
+
+/* =========================
+   PAGE TITLE
+========================= */
+.girls-title {
+  font-size: 32px;
+  font-weight: 700;
+  color: #c2185b;
+  margin-bottom: 25px;
+  text-align: center;
+}
+
+/* =========================
+   PRODUCT GRID
+========================= */
+.girls-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 24px;
+  margin-top: 25px;
+}
+
+/* =========================
+   EMPTY STATE
+========================= */
+.girls-grid:empty::after {
+  content: "No products available";
+  grid-column: 1 / -1;
+  text-align: center;
+  color: #999;
+  font-size: 16px;
+  margin-top: 40px;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+@media (max-width: 768px) {
+  .girls-page {
+    padding: 20px;
+  }
+
+  .girls-title {
+    font-size: 26px;
+  }
+
+  .girls-grid {
+    gap: 18px;
+  }
+}
