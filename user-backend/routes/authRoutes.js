@@ -1,56 +1,85 @@
-import express from 'express'
-import bcrypt from 'bcryptjs'
-import jwt from 'jsonwebtoken'
-import User from '../models/User.js'
-import admin from '../firebaseAdmin.js'
+import express from "express"
+import bcrypt from "bcryptjs"
+import jwt from "jsonwebtoken"
+import User from "../models/User.js"
 
 const router = express.Router()
 
-// Register
-router.post('/register', async (req, res) => {
-  const { name, email, password } = req.body
-  const hashed = await bcrypt.hash(password, 10)
-  await User.create({ name, email, password: hashed })
-  res.json({ message: 'User created' })
-})
-
-// Login
-router.post('/login', async (req, res) => {
+/* USER LOGIN */
+router.post("/login", async (req, res) => {
   const { email, password } = req.body
-  const user = await User.findOne({ email })
-  if (!user) return res.json({ message: 'User not found' })
 
-  const ok = await bcrypt.compare(password, user.password)
-  if (!ok) return res.json({ message: 'Invalid password' })
+  const user = await User.findOne({ email, role: "user" })
+  if (!user) return res.status(401).json({ message: "Invalid credentials" })
 
-  const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET)
+  const match = await bcrypt.compare(password, user.password)
+  if (!match) return res.status(401).json({ message: "Invalid credentials" })
+
+  const token = jwt.sign(
+    { id: user._id, role: user.role },
+    process.env.JWT_SECRET,
+    { expiresIn: "1d" }
+  )
+
   res.json({ token })
 })
 
-// Google login
-router.post('/google-login', async (req, res) => {
-  try {
-    const { token } = req.body
-    const decoded = await admin.auth().verifyIdToken(token)
+/* ADMIN LOGIN (unchanged) */
+router.post("/admin/login", async (req, res) => {
+  const { email, password } = req.body
 
-    let user = await User.findOne({ email: decoded.email })
-    if (!user) {
-      user = await User.create({
-        name: decoded.name,
-        email: decoded.email
-      })
+  const admin = await User.findOne({ email, role: "admin" })
+  if (!admin) return res.status(401).json({ message: "Invalid credentials" })
+
+  const match = await bcrypt.compare(password, admin.password)
+  if (!match) return res.status(401).json({ message: "Invalid credentials" })
+
+  const token = jwt.sign(
+    { id: admin._id, role: admin.role },
+    process.env.JWT_SECRET,
+    { expiresIn: "1d" }
+  )
+
+  res.json({ token })
+})
+
+/* ===========================
+   USER REGISTER
+=========================== */
+router.post("/register", async (req, res) => {
+  try {
+    const { name, email, password } = req.body
+
+    if (!name || !email || !password) {
+      return res.status(400).json({ message: "All fields required" })
     }
 
-    const jwtToken = jwt.sign(
-      { id: user._id },
-      process.env.JWT_SECRET,
-      { expiresIn: '1d' }
-    )
+    const exists = await User.findOne({ email })
+    if (exists) {
+      return res.status(409).json({ message: "User already exists" })
+    }
 
-    res.json({ token: jwtToken })
+    const hashedPassword = await bcrypt.hash(password, 10)
+
+    const user = await User.create({
+      name,
+      email,
+      password: hashedPassword,
+      role: "user",
+    })
+
+    res.status(201).json({
+      message: "User registered successfully",
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+      },
+    })
   } catch (err) {
-    res.status(401).json({ message: 'Google login failed' })
+    console.error("REGISTER ERROR:", err)
+    res.status(500).json({ message: "Server error" })
   }
 })
 
-export default router   // ✅ THIS LINE IS REQUIRED
+export default router

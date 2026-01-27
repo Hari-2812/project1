@@ -1,12 +1,16 @@
-const orderSchema = new mongoose.Schema({
-  user: Object,
-  items: Array,
-  total: Number,
-  status: {
-    type: String,
-    enum: ["Placed","Packed","Shipped","Delivered"],
-    default: "Placed"
-  }
-});
+import mongoose from "mongoose"
 
-export default mongoose.model("Order", orderSchema);
+const orderSchema = new mongoose.Schema(
+  {
+    userId: mongoose.Schema.Types.ObjectId,
+    products: Array,
+    totalAmount: Number,
+    status: {
+      type: String,
+      default: "Pending",
+    },
+  },
+  { timestamps: true }
+)
+
+export default mongoose.model("Order", orderSchema)

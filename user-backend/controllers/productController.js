@@ -1,16 +1,23 @@
-import Product from "../models/Product.js";
+import Product from "../models/Product.js"
+import { io } from "../server.js"   // ✅ ADD
 
-export const getProducts = async (req,res)=>{
-  const filter = req.query.category ? { category:req.query.category } : {};
-  res.json(await Product.find(filter));
-};
+export const addProduct = async (req, res) => {
+  const product = await Product.create({
+    ...req.body,
+    image: req.file?.filename,
+  })
 
-export const addProduct = async (req,res)=>{
-  await Product.create(req.body);
-  res.json({ message:"Product added" });
-};
+  io.emit("product-added", product) // ✅ ADD (REAL-TIME)
 
-export const bulkAddProducts = async (req,res)=>{
-  await Product.insertMany(req.body);
-  res.json({ message:"Bulk upload done" });
-};
+  res.status(201).json(product)
+}
+
+export const getProducts = async (req, res) => {
+  const products = await Product.find()
+  res.json(products)
+}
+
+export const deleteProduct = async (req, res) => {
+  await Product.findByIdAndDelete(req.params.id)
+  res.json({ message: "Product deleted" })
+}
