@@ -1,86 +1,41 @@
-import express from "express"
-import mongoose from "mongoose"
-import cors from "cors"
-import dotenv from "dotenv"
-import { createServer } from "http"
-import { Server } from "socket.io"
-import path from "path"
-import { fileURLToPath } from "url"
+import express from "express";
+import mongoose from "mongoose";
+import cors from "cors";
+import dotenv from "dotenv";
+import { createServer } from "http";
+import { Server } from "socket.io";
+import path from "path";
+import { fileURLToPath } from "url";
 
-import authRoutes from "./routes/authRoutes.js"
-import adminRoutes from "./routes/adminRoutes.js"
-import productRoutes from "./routes/productRoutes.js"
-import orderRoutes from "./routes/orderRoutes.js"
+import authRoutes from "./routes/authRoutes.js";
+import adminRoutes from "./routes/adminRoutes.js";
+import productRoutes from "./routes/productRoutes.js";
 
-dotenv.config()
+dotenv.config();
+const app = express();
 
-const app = express()
+app.use(cors({ origin: ["http://localhost:5173","http://localhost:5174"], credentials: true }));
+app.use(express.json());
 
-/* ======================
-   BASIC MIDDLEWARE
-====================== */
-app.use(
-  cors({
-    origin: ["http://localhost:5173", "http://localhost:5174"],
-    credentials: true,
-  })
-)
-app.use(express.json())
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-/* ======================
-   STATIC FILES (IMAGES)
-====================== */
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = path.dirname(__filename)
+app.use("/api/auth", authRoutes);
+app.use("/api/admin", adminRoutes);
+app.use("/api/products", productRoutes);
+app.use("/uploads", express.static("uploads"));
 
-app.use("/uploads", express.static(path.join(__dirname, "uploads")))
+app.get("/test", (req, res) => res.send("Backend OK"));
 
-/* ======================
-   ROUTES
-====================== */
-app.use("/api/auth", authRoutes)
-app.use("/api/admin", adminRoutes)
-app.use("/api/products", productRoutes)
-app.use("/api/orders", orderRoutes)
-
-app.get("/test", (req, res) => {
-  res.send("Backend OK")
-})
-
-/* ======================
-   SOCKET.IO SETUP
-====================== */
-const httpServer = createServer(app)
-
+const httpServer = createServer(app);
 const io = new Server(httpServer, {
-  cors: {
-    origin: ["http://localhost:5173", "http://localhost:5174"],
-    methods: ["GET", "POST"],
-  },
-})
+  cors: { origin: ["http://localhost:5173","http://localhost:5174"] },
+});
+export { io };
 
-io.on("connection", (socket) => {
-  console.log("🟢 User connected:", socket.id)
-
-  socket.on("disconnect", () => {
-    console.log("🔴 User disconnected:", socket.id)
-  })
-})
-
-/* 🔥 EXPORT SOCKET INSTANCE */
-export { io }
-
-/* ======================
-   DB + SERVER START
-====================== */
-mongoose
-  .connect(process.env.MONGO_URI)
-  .then(() => {
-    console.log("MongoDB connected")
-    httpServer.listen(5000, () => {
-      console.log("Server running on port 5000")
-    })
-  })
-  .catch((err) => {
-    console.error("Mongo connection error:", err)
-  })
+mongoose.connect(process.env.MONGO_URI).then(() => {
+  httpServer.listen(5000, () =>
+    console.log("🚀 Server running on port 5000")
+  );
+});
