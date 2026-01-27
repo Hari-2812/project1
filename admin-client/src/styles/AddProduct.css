@@ -1,0 +1,115 @@
+/* Page background */
+.add-product-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #fceabb, #f8b500);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 30px;
+  font-family: "Segoe UI", Tahoma, sans-serif;
+}
+
+/* Card */
+.add-product-card {
+  width: 460px;
+  background: #ffffff;
+  padding: 28px;
+  border-radius: 18px;
+  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.2);
+  animation: slideUp 0.6s ease;
+}
+
+/* Title */
+.add-product-card h2 {
+  text-align: center;
+  margin-bottom: 22px;
+  color: #333;
+  font-size: 22px;
+}
+
+/* Inputs & selects */
+.add-product-card input,
+.add-product-card select,
+.add-product-card textarea {
+  width: 100%;
+  padding: 12px 14px;
+  margin-bottom: 14px;
+  border-radius: 10px;
+  border: 1px solid #dcdcdc;
+  font-size: 14px;
+  transition: all 0.25s ease;
+  background: #fafafa;
+}
+
+/* Focus effect */
+.add-product-card input:focus,
+.add-product-card select:focus,
+.add-product-card textarea:focus {
+  outline: none;
+  border-color: #f8b500;
+  box-shadow: 0 0 0 2px rgba(248, 181, 0, 0.3);
+  background: #fff;
+}
+
+/* Textarea */
+.add-product-card textarea {
+  height: 90px;
+  resize: none;
+}
+
+/* File input */
+.add-product-card input[type="file"] {
+  padding: 8px;
+  background: #fff;
+  border: 1px dashed #ccc;
+  cursor: pointer;
+}
+
+/* Button */
+.add-product-card button {
+  width: 100%;
+  padding: 13px;
+  margin-top: 8px;
+  background: linear-gradient(135deg, #ff9800, #ff5722);
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+/* Button hover */
+.add-product-card button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(255, 87, 34, 0.4);
+}
+
+/* Success / error message */
+.form-message {
+  margin-top: 12px;
+  text-align: center;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+/* Animation */
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Mobile responsive */
+@media (max-width: 500px) {
+  .add-product-card {
+    width: 100%;
+    padding: 22px;
+  }
+}

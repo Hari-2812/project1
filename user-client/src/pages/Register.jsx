@@ -31,7 +31,7 @@ export default function Register() {
     setError('')
     const res = await registerUser(form)
 
-    if (res.message === 'User created') {
+    if (res.message === 'User registered successfully') {
       navigate('/')
     } else {
       setError(res.message || 'Registration failed')

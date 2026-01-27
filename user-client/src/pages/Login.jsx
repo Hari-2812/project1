@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { loginUser } from '../services/authService'
-import { loginWithGoogle } from '../services/googleAuth'
 import '../styles/Login.css'
 
 export default function Login() {
@@ -9,11 +8,12 @@ export default function Login() {
   const [password, setPassword] = useState('')
   const [show, setShow] = useState(false)
   const [error, setError] = useState('')
-  const [loading, setLoading] = useState(false) // ✅ ADDED
+  const [loading, setLoading] = useState(false)
+
   const navigate = useNavigate()
 
   /* ======================
-     ✅ VALIDATION (ADDED)
+     VALIDATION
   ====================== */
   const validate = () => {
     if (!email || !password) {
@@ -41,19 +41,16 @@ export default function Login() {
   ====================== */
   const submit = async (e) => {
     e.preventDefault()
-
-    // ✅ Validation added (OLD LOGIC SAFE)
     if (!validate()) return
 
     try {
-      setLoading(true) // ✅ ADDED
+      setLoading(true)
 
       const res = await loginUser({ email, password })
 
       if (res.token) {
         localStorage.setItem('token', res.token)
 
-        // ✅ Store user if backend sends it
         if (res.user) {
           localStorage.setItem('user', JSON.stringify(res.user))
         }
@@ -62,49 +59,22 @@ export default function Login() {
       } else {
         setError(res.message || 'Login failed')
       }
-    } catch (err) {
-      console.error(err)
+    } catch {
       setError('Something went wrong')
     } finally {
-      setLoading(false) // ✅ ADDED
+      setLoading(false)
     }
   }
 
   /* ======================
-     GOOGLE LOGIN (UNCHANGED)
+     GOOGLE LOGIN (DISABLED SAFELY)
   ====================== */
-  const googleLogin = async () => {
-    try {
-      const firebaseToken = await loginWithGoogle()
-
-      const res = await fetch(
-        'http://localhost:5000/api/auth/google-login',
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ token: firebaseToken }),
-        }
-      )
-
-      const data = await res.json()
-
-      if (data.token) {
-        localStorage.setItem('token', data.token)
-
-        if (data.user) {
-          localStorage.setItem('user', JSON.stringify(data.user))
-        }
-
-        navigate('/home')
-      }
-    } catch (err) {
-      console.error(err)
-      setError('Google login failed')
-    }
+  const googleLogin = () => {
+    setError('Google login is not enabled yet')
   }
 
   /* ======================
-     UI (UNCHANGED)
+     UI
   ====================== */
   return (
     <div className="login-container">
@@ -132,7 +102,6 @@ export default function Login() {
             <span
               className="eye"
               onClick={() => setShow(!show)}
-              title={show ? 'Hide password' : 'Show password'}
             >
               {show ? '👁️' : '🙈'}
             </span>
@@ -150,10 +119,6 @@ export default function Login() {
         <div className="divider">OR</div>
 
         <button className="google-btn" onClick={googleLogin}>
-          <img
-            src="https://developers.google.com/identity/images/g-logo.png"
-            alt="Google"
-          />
           Continue with Google
         </button>
 

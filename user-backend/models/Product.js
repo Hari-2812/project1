@@ -1,13 +1,18 @@
-import mongoose from "mongoose";
+import mongoose from "mongoose"
 
-const productSchema = new mongoose.Schema({
-  name: String,
-  category: { type: String, enum: ["boys","girls"], index: true },
-  price: Number,
-  stock: Number,
-  sizes: [String],
-  image: String,
-  isActive: { type: Boolean, default: true }
-});
+const productSchema = new mongoose.Schema(
+  {
+    name: String,
+    gender: { type: String, enum: ["Boys", "Girls"] },
+    ageGroup: String,
+    category: String,
+    fabric: String,
+    price: Number,
+    stock: Number,
+    description: String,
+    image: String,
+  },
+  { timestamps: true }
+)
 
-export default mongoose.model("Product", productSchema);
+export default mongoose.model("Product", productSchema)

@@ -1,41 +1,86 @@
-import express from 'express'
-import mongoose from 'mongoose'
-import cors from 'cors'
-import dotenv from 'dotenv'
-import authRoutes from './routes/authRoutes.js'
-import offerRoutes from "./routes/offerRoutes.js";
+import express from "express"
+import mongoose from "mongoose"
+import cors from "cors"
+import dotenv from "dotenv"
+import { createServer } from "http"
+import { Server } from "socket.io"
+import path from "path"
+import { fileURLToPath } from "url"
 
+import authRoutes from "./routes/authRoutes.js"
+import adminRoutes from "./routes/adminRoutes.js"
+import productRoutes from "./routes/productRoutes.js"
+import orderRoutes from "./routes/orderRoutes.js"
 
-/* Load env FIRST */
 dotenv.config()
 
 const app = express()
 
-app.use(cors())
+/* ======================
+   BASIC MIDDLEWARE
+====================== */
+app.use(
+  cors({
+    origin: ["http://localhost:5173", "http://localhost:5174"],
+    credentials: true,
+  })
+)
 app.use(express.json())
-app.use("/api/offers", offerRoutes)
+
+/* ======================
+   STATIC FILES (IMAGES)
+====================== */
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
+
+app.use("/uploads", express.static(path.join(__dirname, "uploads")))
+
+/* ======================
+   ROUTES
+====================== */
 app.use("/api/auth", authRoutes)
-app.use("/api/offers", offerRoutes)
+app.use("/api/admin", adminRoutes)
+app.use("/api/products", productRoutes)
+app.use("/api/orders", orderRoutes)
 
-/* Test env */
-console.log('Mongo URI exists:', !!process.env.MONGO_URI)
-
-/* MongoDB connection */
-const connectDB = async () => {
-  try {
-    await mongoose.connect(process.env.MONGO_URI)
-    console.log('✅ MongoDB connected successfully')
-  } catch (error) {
-    console.error('❌ MongoDB connection failed:', error.message)
-    process.exit(1)
-  }
-}
-
-connectDB()
-
-app.use('/api/auth', authRoutes)
-
-const PORT = 5000
-app.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`)
+app.get("/test", (req, res) => {
+  res.send("Backend OK")
 })
+
+/* ======================
+   SOCKET.IO SETUP
+====================== */
+const httpServer = createServer(app)
+
+const io = new Server(httpServer, {
+  cors: {
+    origin: ["http://localhost:5173", "http://localhost:5174"],
+    methods: ["GET", "POST"],
+  },
+})
+
+io.on("connection", (socket) => {
+  console.log("🟢 User connected:", socket.id)
+
+  socket.on("disconnect", () => {
+    console.log("🔴 User disconnected:", socket.id)
+  })
+})
+
+/* 🔥 EXPORT SOCKET INSTANCE */
+export { io }
+
+/* ======================
+   DB + SERVER START
+====================== */
+mongoose
+  .connect(process.env.MONGO_URI)
+  .then(() => {
+    console.log("MongoDB connected")
+    httpServer.listen(5000, () => {
+      console.log("Server running on port 5000")
+    })
+  })
+  .catch((err) => {
+    console.error("Mongo connection error:", err)
+  })
