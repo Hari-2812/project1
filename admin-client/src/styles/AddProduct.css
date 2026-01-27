@@ -1,115 +1,171 @@
-/* Page background */
-.add-product-container {
+/* ===== PAGE ===== */
+.bulk-wrapper {
+  padding: 30px;
+  background: #f4f6f8;
   min-height: 100vh;
-  background: linear-gradient(135deg, #fceabb, #f8b500);
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* ===== TITLE ===== */
+.bulk-wrapper h2 {
+  margin-bottom: 20px;
+  font-size: 20px;
+  font-weight: 600;
+  color: #222;
+}
+
+/* ===== PRODUCT CARD ===== */
+.bulk-card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+/* ===== GRID ===== */
+.grid-4 {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+/* ===== INPUTS ===== */
+.bulk-card input,
+.bulk-card select,
+.bulk-card textarea {
+  width: 100%;
+  padding: 9px 10px;
+  font-size: 13px;
+  border-radius: 5px;
+  border: 1px solid #d1d5db;
+  background: #fff;
+}
+
+.bulk-card textarea {
+  resize: vertical;
+  min-height: 70px;
+}
+
+/* Focus */
+.bulk-card input:focus,
+.bulk-card select:focus,
+.bulk-card textarea:focus {
+  outline: none;
+  border-color: #2563eb;
+}
+
+/* ===== SIZES ===== */
+.sizes-box {
+  border: 1px dashed #d1d5db;
+  padding: 12px;
+  border-radius: 6px;
+  margin-bottom: 12px;
+}
+
+.size-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.size-row select {
+  flex: 1;
+}
+
+.size-row input {
+  width: 80px;
+}
+
+.size-row button {
+  background: none;
+  border: none;
+  color: #dc2626;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+/* Add size */
+.link-btn {
+  background: none;
+  border: none;
+  color: #2563eb;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+/* ===== FILE INPUT ===== */
+.bulk-card input[type="file"] {
+  font-size: 12px;
+  margin-bottom: 12px;
+}
+
+/* ===== ROW ACTIONS ===== */
+.row-actions {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.row-actions label {
   display: flex;
   align-items: center;
-  justify-content: center;
-  padding: 30px;
-  font-family: "Segoe UI", Tahoma, sans-serif;
+  gap: 6px;
+  font-size: 13px;
 }
 
-/* Card */
-.add-product-card {
-  width: 460px;
-  background: #ffffff;
-  padding: 28px;
-  border-radius: 18px;
-  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.2);
-  animation: slideUp 0.6s ease;
-}
-
-/* Title */
-.add-product-card h2 {
-  text-align: center;
-  margin-bottom: 22px;
-  color: #333;
-  font-size: 22px;
-}
-
-/* Inputs & selects */
-.add-product-card input,
-.add-product-card select,
-.add-product-card textarea {
-  width: 100%;
-  padding: 12px 14px;
-  margin-bottom: 14px;
-  border-radius: 10px;
-  border: 1px solid #dcdcdc;
-  font-size: 14px;
-  transition: all 0.25s ease;
-  background: #fafafa;
-}
-
-/* Focus effect */
-.add-product-card input:focus,
-.add-product-card select:focus,
-.add-product-card textarea:focus {
-  outline: none;
-  border-color: #f8b500;
-  box-shadow: 0 0 0 2px rgba(248, 181, 0, 0.3);
-  background: #fff;
-}
-
-/* Textarea */
-.add-product-card textarea {
-  height: 90px;
-  resize: none;
-}
-
-/* File input */
-.add-product-card input[type="file"] {
-  padding: 8px;
-  background: #fff;
-  border: 1px dashed #ccc;
+.row-actions button {
+  background: #fee2e2;
+  color: #b91c1c;
+  border: 1px solid #fecaca;
+  padding: 6px 10px;
+  font-size: 12px;
+  border-radius: 4px;
   cursor: pointer;
 }
 
-/* Button */
-.add-product-card button {
-  width: 100%;
-  padding: 13px;
-  margin-top: 8px;
-  background: linear-gradient(135deg, #ff9800, #ff5722);
-  color: #fff;
+/* ===== FOOTER ===== */
+.bulk-footer {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+/* Buttons */
+.bulk-footer button {
+  padding: 10px 16px;
+  font-size: 14px;
+  border-radius: 5px;
   border: none;
-  border-radius: 12px;
-  font-size: 16px;
-  font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s ease;
 }
 
-/* Button hover */
-.add-product-card button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 25px rgba(255, 87, 34, 0.4);
+.bulk-footer button:first-child {
+  background: #e5e7eb;
 }
 
-/* Success / error message */
-.form-message {
-  margin-top: 12px;
-  text-align: center;
-  font-weight: 600;
-  font-size: 14px;
+.bulk-footer button:last-child {
+  background: #2563eb;
+  color: white;
 }
 
-/* Animation */
-@keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
+.bulk-footer button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ===== MOBILE ===== */
+@media (max-width: 900px) {
+  .grid-4 {
+    grid-template-columns: 1fr 1fr;
   }
 }
 
-/* Mobile responsive */
 @media (max-width: 500px) {
-  .add-product-card {
-    width: 100%;
-    padding: 22px;
+  .grid-4 {
+    grid-template-columns: 1fr;
   }
 }

@@ -1,24 +1,16 @@
-import express from "express"
-import { authMiddleware } from "../middleware/authMiddleware.js"
-import { adminMiddleware } from "../middleware/adminMiddleware.js"
-import upload from "../middleware/multer.js"
-import { addProduct, deleteProduct } from "../controllers/productController.js"
+import express from "express";
+import upload from "../middleware/upload.js";
+import {
+  bulkAddProducts,
+  deleteProduct,
+} from "../controllers/productController.js";
 
-const router = express.Router()
+const router = express.Router();
 
-router.post(
-  "/products",
-  authMiddleware,
-  adminMiddleware,
-  upload.single("image"),
-  addProduct
-)
+/* BULK ADD */
+router.post("/products/bulk", upload.any(), bulkAddProducts);
 
-router.delete(
-  "/products/:id",
-  authMiddleware,
-  adminMiddleware,
-  deleteProduct
-)
+/* DELETE */
+router.delete("/products/:id", deleteProduct);
 
-export default router
+export default router;

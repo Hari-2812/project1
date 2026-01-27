@@ -1,8 +1,8 @@
-import { useEffect, useState } from "react"
-import CategoryTabs from "../components/CategoryTabs"
-import ProductCard from "../components/ProductCard"
-import socket from "../services/socket"        // ✅ ADD
-import "../styles/BoysProducts.css"
+import { useEffect, useState } from "react";
+import CategoryTabs from "../components/CategoryTabs";
+import ProductCard from "../components/ProductCard";
+import socket from "../services/socket";
+import "../styles/BoysProducts.css";
 
 const categories = [
   "All",
@@ -11,36 +11,49 @@ const categories = [
   "Shorts",
   "Jeans",
   "Jackets",
-]
+];
 
 export default function BoysProducts() {
-  const [activeCategory, setActiveCategory] = useState("All")
-  const [products, setProducts] = useState([])   // ✅ ADD
+  const [activeCategory, setActiveCategory] = useState("All");
+  const [products, setProducts] = useState([]); // ✅ always array
 
   /* =========================
      INITIAL FETCH
   ========================= */
   useEffect(() => {
-    fetchProducts()
+    fetchProducts();
 
-    /* 🔥 REAL-TIME LISTENER */
     socket.on("product-added", (product) => {
-      setProducts(prev => [product, ...prev])
-    })
+      setProducts((prev) => [product, ...prev]);
+    });
 
-    return () => socket.off("product-added")
-  }, [])
+    return () => socket.off("product-added");
+  }, []);
 
   const fetchProducts = async () => {
-    const res = await fetch("http://localhost:5000/api/products")
-    const data = await res.json()
-    setProducts(data)
-  }
+    try {
+      const res = await fetch("http://localhost:5000/api/products");
+      const data = await res.json();
 
+      // ✅ IMPORTANT FIX HERE
+      setProducts(Array.isArray(data.products) ? data.products : []);
+    } catch (err) {
+      console.error("Failed to fetch products", err);
+      setProducts([]);
+    }
+  };
+
+  /* =========================
+     FILTER LOGIC (SAFE)
+  ========================= */
   const filteredProducts =
     activeCategory === "All"
       ? products
-      : products.filter(p => p.category === activeCategory)
+      : products.filter(
+          (p) =>
+            p.category === activeCategory &&
+            p.gender === "Boys" // ✅ BOYS ONLY
+        );
 
   return (
     <div className="boys-page">
@@ -53,10 +66,16 @@ export default function BoysProducts() {
       />
 
       <div className="boys-grid">
-        {filteredProducts.map(product => (
-          <ProductCard key={product._id} product={product} />
-        ))}
+        {filteredProducts.length === 0 ? (
+          <p style={{ textAlign: "center", width: "100%" }}>
+            No products found
+          </p>
+        ) : (
+          filteredProducts.map((product) => (
+            <ProductCard key={product._id} product={product} />
+          ))
+        )}
       </div>
     </div>
-  )
+  );
 }
