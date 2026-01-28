@@ -21,7 +21,9 @@ export default function Checkout() {
 
   const [error, setError] = useState("");
 
-  /* ✅ PREFILL USER (UNCHANGED) */
+  /* ======================
+     PREFILL USER
+  ====================== */
   useEffect(() => {
     if (user) {
       setForm((prev) => ({
@@ -42,7 +44,9 @@ export default function Checkout() {
   const discount = subtotal > 2000 ? 300 : 0;
   const total = subtotal - discount + delivery;
 
-  /* ✅ IMPROVED VALIDATION (NO OLD LOGIC REMOVED) */
+  /* ======================
+     VALIDATION
+  ====================== */
   const validate = () => {
     if (
       !form.name ||
@@ -77,17 +81,66 @@ export default function Checkout() {
     return true;
   };
 
-  const placeOrder = () => {
-    if (!validate()) return;
+  /* ======================
+     PLACE ORDER (FIXED)
+  ====================== */
+ const placeOrder = async () => {
+  if (!validate()) return;
 
-    const transactionId = "TXN" + Date.now();
+  const token = localStorage.getItem("token");
+  if (!token) {
+    setError("Please login again");
+    return;
+  }
 
-    clearCart(); // ✅ already correct
+  // 🔥 FILTER ONLY VALID PRODUCTS
+  const orderItems = cart
+    .filter(item => item._id && item._id.length === 24)
+    .map(item => ({
+      productId: item._id, // ✅ VALID ObjectId
+      name: item.name,
+      quantity: item.qty,
+      price: item.price,
+    }));
+
+  if (orderItems.length === 0) {
+    setError("Invalid products in cart");
+    return;
+  }
+
+  try {
+    const res = await fetch("http://localhost:5000/api/orders", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        items: orderItems,
+        totalAmount: total,
+      }),
+    });
+
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.message);
+    }
+
+    const order = await res.json();
+    clearCart();
 
     navigate("/order-success", {
-      state: { transactionId, total },
+      state: {
+        transactionId: order._id,
+        total,
+      },
     });
-  };
+  } catch (err) {
+    console.error("Order error:", err);
+    setError(err.message || "Order failed");
+  }
+};
+
 
   return (
     <div className="checkout-container">
