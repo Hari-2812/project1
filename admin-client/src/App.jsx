@@ -1,13 +1,15 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom"
+
 import Login from "./pages/Login"
 import Dashboard from "./pages/Dashboard"
 import AddProduct from "./pages/AddProduct"
-// later you can create these pages
-// import TrackOrders from "./pages/TrackOrders"
-// import PaymentStatus from "./pages/PaymentStatus"
-// import CreateOffer from "./pages/CreateOffer"
+import AdminOrders from "./pages/AdminOrders"
+// import AdminOrderDetails from "./pages/AdminOrderDetails"
+import AdminTrackOrder from "./pages/AdminTrackOrder"
 
-/* Protect admin routes */
+/* =========================
+   PROTECTED ROUTE
+========================= */
 const PrivateRoute = ({ children }) => {
   const token = localStorage.getItem("adminToken")
   return token ? children : <Navigate to="/" replace />
@@ -17,10 +19,15 @@ const App = () => {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Public route */}
+
+        {/* =====================
+            PUBLIC
+        ====================== */}
         <Route path="/" element={<Login />} />
 
-        {/* Protected admin routes */}
+        {/* =====================
+            ADMIN (PROTECTED)
+        ====================== */}
         <Route
           path="/dashboard"
           element={
@@ -39,37 +46,43 @@ const App = () => {
           }
         />
 
-        {/*
+        {/* =====================
+            ORDERS
+        ====================== */}
         <Route
-          path="/track-orders"
+          path="/admin-orders"
           element={
             <PrivateRoute>
-              <TrackOrders />
+              <AdminOrders />
             </PrivateRoute>
           }
         />
 
+        {/* ORDER DETAILS
         <Route
-          path="/payment-status"
+          path="/orders/:id"
           element={
             <PrivateRoute>
-              <PaymentStatus />
+              <AdminOrderDetails />
+            </PrivateRoute>
+          }
+        /> */}
+
+        {/* TRACK / UPDATE ORDER */}
+        <Route
+          path="/orders/:id/track"
+          element={
+            <PrivateRoute>
+              <AdminTrackOrder />
             </PrivateRoute>
           }
         />
 
-        <Route
-          path="/create-offer"
-          element={
-            <PrivateRoute>
-              <CreateOffer />
-            </PrivateRoute>
-          }
-        />
-        */}
+        {/* =====================
+            FALLBACK
+        ====================== */}
+        <Route path="*" element={<Navigate to="/" replace />} />
 
-        {/* Fallback */}
-        <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </BrowserRouter>
   )
