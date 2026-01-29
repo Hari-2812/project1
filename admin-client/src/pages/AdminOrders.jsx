@@ -15,6 +15,12 @@ const AdminOrders = () => {
      FETCH ALL ORDERS
   ========================= */
   const fetchOrders = async () => {
+    if (!adminToken) {
+      console.error("❌ No admin token found");
+      setLoading(false);
+      return;
+    }
+
     try {
       const res = await axios.get(`${API_BASE}/orders`, {
         headers: {
@@ -22,16 +28,39 @@ const AdminOrders = () => {
         },
       });
 
-      setOrders(res.data || []);
+      setOrders(Array.isArray(res.data) ? res.data : []);
     } catch (error) {
-      console.error("❌ Error fetching orders:", error);
+      console.error(
+        "❌ Error fetching orders:",
+        error.response?.data || error.message
+      );
     } finally {
       setLoading(false);
     }
   };
 
+  /* =========================
+     MARK ORDERS AS VIEWED
+  ========================= */
+  const markOrdersViewed = async () => {
+    try {
+      await axios.put(
+        `${API_BASE}/orders/mark-viewed`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${adminToken}`,
+          },
+        }
+      );
+    } catch (error) {
+      console.error("❌ Failed to mark orders viewed");
+    }
+  };
+
   useEffect(() => {
     fetchOrders();
+    markOrdersViewed();
   }, []);
 
   if (loading) return <p className="loading-text">Loading Orders...</p>;
@@ -64,19 +93,23 @@ const AdminOrders = () => {
                   <td>{o._id}</td>
 
                   <td>
-                    {o.items.map((item, idx) => (
-                      <div key={idx}>
-                        {item.name} × {item.quantity}
-                      </div>
-                    ))}
+                    {Array.isArray(o.items) && o.items.length > 0 ? (
+                      o.items.map((item, idx) => (
+                        <div key={idx}>
+                          {item.name} × {item.quantity}
+                        </div>
+                      ))
+                    ) : (
+                      <span>No items</span>
+                    )}
                   </td>
 
                   <td>₹{o.totalAmount}</td>
 
                   <td
-                    className={`order-status status-${o.orderStatus.toLowerCase()}`}
+                    className={`order-status status-${(o.orderStatus || "placed").toLowerCase()}`}
                   >
-                    {o.orderStatus}
+                    {o.orderStatus || "Placed"}
                   </td>
 
                   <td>
