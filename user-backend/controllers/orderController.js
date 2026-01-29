@@ -81,3 +81,54 @@ export const markViewed = async (req, res) => {
     res.status(500).json({ message: "Failed to update orders" })
   }
 }
+
+/* =========================
+   ADMIN — GET ORDER BY ID ✅ (NEW)
+========================= */
+export const getOrderById = async (req, res) => {
+  try {
+    const order = await Order.findById(req.params.id)
+
+    if (!order) {
+      return res.status(404).json({ message: "Order not found" })
+    }
+
+    res.json(order)
+  } catch (err) {
+    console.error("❌ Fetch order error:", err)
+    res.status(500).json({ message: "Failed to fetch order" })
+  }
+}
+
+/* =========================
+   ADMIN — UPDATE ORDER STATUS ✅ (NEW)
+========================= */
+export const updateOrderStatus = async (req, res) => {
+  try {
+    const { status } = req.body
+
+    if (!status) {
+      return res.status(400).json({ message: "Status is required" })
+    }
+
+    const order = await Order.findById(req.params.id)
+
+    if (!order) {
+      return res.status(404).json({ message: "Order not found" })
+    }
+
+    order.orderStatus = status
+    await order.save()
+
+    // 🔔 Optional: notify frontend
+    io.emit("order-status-updated", {
+      orderId: order._id,
+      status,
+    })
+
+    res.json({ message: "Order status updated successfully" })
+  } catch (err) {
+    console.error("❌ Update status error:", err)
+    res.status(500).json({ message: "Failed to update order status" })
+  }
+}
