@@ -12,6 +12,7 @@ import Offers from "./pages/Offers";
 import OrderSuccess from "./pages/Order";
 import Boys from "./pages/BoysProducts"; // ✅ ADDED
 import Profile from "./pages/Profile";
+import EditProfile from "./pages/EditProfile";
 
 import Header from "./components/Header";
 
@@ -38,7 +39,7 @@ function Layout() {
         <Route path="/register" element={<Register />} />
         <Route path="/forgot" element={<ForgotPassword />} />
         <Route path="/profile" element={<Profile />} />
-        
+
         {/* PROTECTED */}
         <Route
           path="/home"
@@ -48,7 +49,15 @@ function Layout() {
             </PrivateRoute>
           }
         />
-
+        <Route
+          path="/profile/edit"
+          element={
+            <PrivateRoute>
+              <EditProfile />
+            </PrivateRoute>
+          }
+        />
+        
         {/* ✅ BOYS PAGE */}
         <Route
           path="/boys"
