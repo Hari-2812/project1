@@ -6,17 +6,13 @@ import User from "../models/User.js";
 const router = express.Router();
 
 /* =========================
-   LOGIN (USER / ADMIN)
+   USER LOGIN
 ========================= */
 router.post("/login", async (req, res) => {
   try {
-    const { email, password, role } = req.body;
+    const { email, password } = req.body;
 
-    if (!email || !password || !role) {
-      return res.status(400).json({ message: "Missing credentials" });
-    }
-
-    const user = await User.findOne({ email, role });
+    const user = await User.findOne({ email, role: "user" });
     if (!user) {
       return res.status(401).json({ message: "Invalid credentials" });
     }
@@ -32,18 +28,47 @@ router.post("/login", async (req, res) => {
       { expiresIn: "1d" }
     );
 
+    res.json({ token, user });
+  } catch (err) {
+    console.error("USER LOGIN ERROR:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+/* =========================
+   ADMIN LOGIN  ✅ (FIX)
+========================= */
+router.post("/admin/login", async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    const admin = await User.findOne({ email, role: "admin" });
+    if (!admin) {
+      return res.status(401).json({ message: "Invalid admin credentials" });
+    }
+
+    const isMatch = await bcrypt.compare(password, admin.password);
+    if (!isMatch) {
+      return res.status(401).json({ message: "Invalid admin credentials" });
+    }
+
+    const token = jwt.sign(
+      { id: admin._id, role: admin.role },
+      process.env.JWT_SECRET,
+      { expiresIn: "1d" }
+    );
+
     res.json({
-      success: true,
       token,
-      user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
+      admin: {
+        id: admin._id,
+        name: admin.name,
+        email: admin.email,
+        role: admin.role,
       },
     });
   } catch (err) {
-    console.error("LOGIN ERROR:", err);
+    console.error("ADMIN LOGIN ERROR:", err);
     res.status(500).json({ message: "Server error" });
   }
 });
@@ -55,12 +80,8 @@ router.post("/register", async (req, res) => {
   try {
     const { name, email, password } = req.body;
 
-    if (!name || !email || !password) {
-      return res.status(400).json({ message: "All fields required" });
-    }
-
-    const exists = await User.findOne({ email });
-    if (exists) {
+    const existing = await User.findOne({ email });
+    if (existing) {
       return res.status(409).json({ message: "User already exists" });
     }
 
@@ -74,12 +95,11 @@ router.post("/register", async (req, res) => {
     });
 
     res.status(201).json({
-      success: true,
       message: "Registered successfully",
       user: {
         id: user._id,
-        name: user.name,
         email: user.email,
+        role: user.role,
       },
     });
   } catch (err) {
