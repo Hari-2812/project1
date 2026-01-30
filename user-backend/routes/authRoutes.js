@@ -6,59 +6,103 @@ import User from "../models/User.js";
 const router = express.Router();
 
 /* =========================
+   COMMON TOKEN CREATOR
+========================= */
+const createToken = (user) => {
+  return jwt.sign(
+    { id: user._id, role: user.role },
+    process.env.JWT_SECRET,
+    { expiresIn: "1d" }
+  );
+};
+
+/* =========================
    USER LOGIN
 ========================= */
 router.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
 
+    if (!email || !password) {
+      return res.status(400).json({
+        success: false,
+        message: "Email and password required",
+      });
+    }
+
     const user = await User.findOne({ email, role: "user" });
     if (!user) {
-      return res.status(401).json({ message: "Invalid credentials" });
+      return res.status(401).json({
+        success: false,
+        message: "Invalid user credentials",
+      });
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      return res.status(401).json({ message: "Invalid credentials" });
+      return res.status(401).json({
+        success: false,
+        message: "Invalid user credentials",
+      });
     }
 
-    const token = jwt.sign(
-      { id: user._id, role: user.role },
-      process.env.JWT_SECRET,
-      { expiresIn: "1d" }
-    );
+    const token = createToken(user);
 
-    res.json({ token, user });
+    res.json({
+      success: true,
+      token,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+      },
+    });
   } catch (err) {
     console.error("USER LOGIN ERROR:", err);
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({
+      success: false,
+      message: "Server error",
+    });
   }
 });
 
 /* =========================
-   ADMIN LOGIN  ✅ (FIX)
+   ADMIN LOGIN (EASY & SAFE)
 ========================= */
 router.post("/admin/login", async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    const admin = await User.findOne({ email, role: "admin" });
-    if (!admin) {
-      return res.status(401).json({ message: "Invalid admin credentials" });
+    if (!email || !password) {
+      return res.status(400).json({
+        success: false,
+        message: "Email and password required",
+      });
+    }
+
+    const admin = await User.findOne({ email });
+
+    // ❌ Block if not admin
+    if (!admin || admin.role !== "admin") {
+      return res.status(403).json({
+        success: false,
+        message: "Admin access only",
+      });
     }
 
     const isMatch = await bcrypt.compare(password, admin.password);
     if (!isMatch) {
-      return res.status(401).json({ message: "Invalid admin credentials" });
+      return res.status(401).json({
+        success: false,
+        message: "Invalid admin credentials",
+      });
     }
 
-    const token = jwt.sign(
-      { id: admin._id, role: admin.role },
-      process.env.JWT_SECRET,
-      { expiresIn: "1d" }
-    );
+    const token = createToken(admin);
 
     res.json({
+      success: true,
       token,
       admin: {
         id: admin._id,
@@ -69,42 +113,60 @@ router.post("/admin/login", async (req, res) => {
     });
   } catch (err) {
     console.error("ADMIN LOGIN ERROR:", err);
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({
+      success: false,
+      message: "Server error",
+    });
   }
 });
 
 /* =========================
-   REGISTER (USER)
+   USER REGISTER
 ========================= */
 router.post("/register", async (req, res) => {
   try {
     const { name, email, password } = req.body;
 
-    const existing = await User.findOne({ email });
-    if (existing) {
-      return res.status(409).json({ message: "User already exists" });
+    if (!name || !email || !password) {
+      return res.status(400).json({
+        success: false,
+        message: "All fields required",
+      });
     }
 
-    const hashed = await bcrypt.hash(password, 10);
+    const existing = await User.findOne({ email });
+    if (existing) {
+      return res.status(409).json({
+        success: false,
+        message: "User already exists",
+      });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
 
     const user = await User.create({
       name,
       email,
-      password: hashed,
+      password: hashedPassword,
       role: "user",
     });
 
     res.status(201).json({
+      success: true,
       message: "Registered successfully",
       user: {
         id: user._id,
+        name: user.name,
         email: user.email,
         role: user.role,
       },
     });
   } catch (err) {
     console.error("REGISTER ERROR:", err);
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({
+      success: false,
+      message: "Server error",
+    });
   }
 });
 
