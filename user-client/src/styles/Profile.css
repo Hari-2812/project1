@@ -1,0 +1,184 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+
+/* =========================
+   PAGE BASE
+========================= */
+.profile-page {
+  min-height: calc(100vh - 80px);
+  padding: 40px 20px;
+  font-family: "Inter", sans-serif;
+  background: linear-gradient(
+    135deg,
+    #0f2027,
+    #203a43,
+    #2c5364
+  );
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+/* =========================
+   PROFILE CARD
+========================= */
+.profile-card {
+  width: 100%;
+  max-width: 480px;
+  padding: 28px 26px;
+
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+
+  box-shadow:
+    0 20px 40px rgba(0, 0, 0, 0.35);
+
+  color: #ffffff;
+  animation: fadeUp 0.4s ease;
+}
+
+/* =========================
+   TITLE
+========================= */
+.profile-card h2 {
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 22px;
+  text-align: center;
+}
+
+/* =========================
+   AVATAR
+========================= */
+.profile-avatar-lg {
+  width: 88px;
+  height: 88px;
+  margin: 0 auto 20px;
+
+  border-radius: 50%;
+  background: linear-gradient(135deg, #00c6ff, #66e0ff);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 32px;
+  font-weight: 700;
+  color: #0f2027;
+
+  box-shadow: 0 10px 25px rgba(0, 198, 255, 0.6);
+}
+
+/* =========================
+   INFO ROWS
+========================= */
+.profile-info {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.profile-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  padding: 12px 14px;
+  border-radius: 10px;
+
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.profile-row span:first-child {
+  font-size: 13px;
+  opacity: 0.85;
+}
+
+.profile-row span:last-child {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+/* =========================
+   ACTION BUTTONS
+========================= */
+.profile-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.profile-actions button {
+  flex: 1;
+  padding: 12px 14px;
+
+  border-radius: 30px;
+  border: none;
+  cursor: pointer;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  transition: all 0.25s ease;
+}
+
+/* EDIT */
+.profile-actions .edit-btn {
+  background: linear-gradient(135deg, #00c6ff, #66e0ff);
+  color: #0f2027;
+}
+
+.profile-actions .edit-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 22px rgba(0, 198, 255, 0.6);
+}
+
+/* LOGOUT */
+.profile-actions .logout-btn {
+  background: rgba(255, 255, 255, 0.18);
+  color: #ffffff;
+}
+
+.profile-actions .logout-btn:hover {
+  background: rgba(255, 255, 255, 0.28);
+}
+
+/* =========================
+   LOADING / ERROR
+========================= */
+.profile-loading,
+.profile-error {
+  color: #ffffff;
+  font-size: 16px;
+  margin-top: 40px;
+}
+
+/* =========================
+   ANIMATION
+========================= */
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* =========================
+   MOBILE
+========================= */
+@media (max-width: 480px) {
+  .profile-card {
+    padding: 22px 18px;
+  }
+
+  .profile-card h2 {
+    font-size: 20px;
+  }
+}
