@@ -1,6 +1,12 @@
-import { useMemo } from "react";
-import { Link } from "react-router-dom";
-import { FaShoppingCart, FaHeart, FaUser } from "react-icons/fa";
+import { useMemo, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import {
+  FaShoppingCart,
+  FaHeart,
+  FaUser,
+  FaSignOutAlt,
+  FaBoxOpen,
+} from "react-icons/fa";
 
 import { useCart } from "../context/CartContext";
 import { useFavorite } from "../context/FavoriteContext";
@@ -11,6 +17,11 @@ import SearchBox from "./SearchBox";
 export default function Header() {
   const { cart } = useCart();
   const { favorites } = useFavorite();
+  const navigate = useNavigate();
+
+  const [showMenu, setShowMenu] = useState(false);
+
+  const userToken = localStorage.getItem("userToken");
 
   /* ======================
      CART COUNT
@@ -29,8 +40,14 @@ export default function Header() {
   }, [favorites]);
 
   /* ======================
-     UI
+     LOGOUT
   ====================== */
+  const logout = () => {
+    localStorage.removeItem("userToken");
+    setShowMenu(false);
+    navigate("/login");
+  };
+
   return (
     <header className="header">
       {/* LOGO */}
@@ -40,8 +57,8 @@ export default function Header() {
 
       {/* SEARCH */}
       <SearchBox />
-      
-      {/* RIGHT ICONS */}
+
+      {/* RIGHT SIDE ICONS */}
       <div className="header-right">
         {/* FAVORITES */}
         <Link to="/favorites" className="cart-icon" title="Favorites">
@@ -60,9 +77,49 @@ export default function Header() {
         </Link>
 
         {/* PROFILE */}
-        <Link to="/profile" className="icon-btn" title="Profile">
-          <FaUser />
-        </Link>
+        {userToken ? (
+          <div
+            className="profile-wrapper"
+            onMouseLeave={() => setShowMenu(false)}
+          >
+            <button
+              className="profile-avatar"
+              onClick={() => setShowMenu(!showMenu)}
+              title="Profile"
+            >
+              <FaUser />
+            </button>
+
+            {showMenu && (
+              <div className="profile-dropdown">
+                <Link
+                  to="/profile"
+                  onClick={() => setShowMenu(false)}
+                >
+                  <FaUser /> My Profile
+                </Link>
+
+                <Link
+                  to="/my-orders"
+                  onClick={() => setShowMenu(false)}
+                >
+                  <FaBoxOpen /> My Orders
+                </Link>
+
+                <button
+                  onClick={logout}
+                  className="logout-btn"
+                >
+                  <FaSignOutAlt /> Logout
+                </button>
+              </div>
+            )}
+          </div>
+        ) : (
+          <Link to="/login" className="profile-avatar">
+            <FaUser />
+          </Link>
+        )}
       </div>
     </header>
   );
