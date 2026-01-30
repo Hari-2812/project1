@@ -2,6 +2,7 @@ import express from "express";
 import {
   placeOrder,
   getAllOrders,
+  getOrderById,
   getUnreadCount,
   markViewed,
   updateOrderStatus,
@@ -12,13 +13,18 @@ import { adminMiddleware } from "../middleware/adminMiddleware.js";
 
 const router = express.Router();
 
-/* USER */
+/* =========================
+   USER
+========================= */
 router.post("/", authMiddleware, placeOrder);
 
-/* ADMIN */
+/* =========================
+   ADMIN
+========================= */
 router.get("/", authMiddleware, adminMiddleware, getAllOrders);
 router.get("/unread-count", authMiddleware, adminMiddleware, getUnreadCount);
 router.put("/mark-viewed", authMiddleware, adminMiddleware, markViewed);
+router.get("/:id", authMiddleware, adminMiddleware, getOrderById); // ✅ FIX
 router.put("/:id/status", authMiddleware, adminMiddleware, updateOrderStatus);
 
 export default router;

@@ -1,6 +1,6 @@
 import Order from "../models/Order.js";
 import crypto from "crypto";
-import { io } from "../server.js"; // adjust path if needed
+import { io } from "../server.js";
 
 /* =========================
    USER: PLACE ORDER
@@ -9,7 +9,6 @@ export const placeOrder = async (req, res) => {
   try {
     const { items, totalAmount } = req.body;
 
-    /* ---------- AUTH CHECK ---------- */
     if (!req.user || !req.user._id) {
       return res.status(401).json({
         success: false,
@@ -17,7 +16,6 @@ export const placeOrder = async (req, res) => {
       });
     }
 
-    /* ---------- VALIDATION ---------- */
     if (!items || !Array.isArray(items) || items.length === 0) {
       return res.status(400).json({
         success: false,
@@ -32,20 +30,18 @@ export const placeOrder = async (req, res) => {
       });
     }
 
-    /* ---------- CREATE ORDER ---------- */
     const order = await Order.create({
-      orderId: crypto.randomUUID(),      // ✅ unique order id
+      orderId: crypto.randomUUID(),
       user: req.user._id,
       items,
       totalAmount,
-
-      // 🔥 VERY IMPORTANT (MATCH MODEL & ADMIN)
       orderStatus: "Placed",
       isViewedByAdmin: false,
     });
-    io.emit("new-order"); // 🔥 THIS LINE
 
-    /* ---------- RESPONSE ---------- */
+    // 🔔 notify admin dashboard
+    io.emit("new-order");
+
     res.status(201).json({
       success: true,
       order,
@@ -74,6 +70,34 @@ export const getAllOrders = async (req, res) => {
     });
   } catch (err) {
     console.error("GET ALL ORDERS ERROR:", err);
+    res.status(500).json({
+      success: false,
+      message: "Server error",
+    });
+  }
+};
+
+/* =========================
+   ADMIN: GET ORDER BY ID ✅
+========================= */
+export const getOrderById = async (req, res) => {
+  try {
+    const order = await Order.findById(req.params.id)
+      .populate("user", "name email");
+
+    if (!order) {
+      return res.status(404).json({
+        success: false,
+        message: "Order not found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      order,
+    });
+  } catch (err) {
+    console.error("GET ORDER BY ID ERROR:", err);
     res.status(500).json({
       success: false,
       message: "Server error",
@@ -131,7 +155,6 @@ export const markViewed = async (req, res) => {
 ========================= */
 export const updateOrderStatus = async (req, res) => {
   try {
-    const { id } = req.params;
     const { status } = req.body;
 
     const allowedStatus = [
@@ -150,7 +173,7 @@ export const updateOrderStatus = async (req, res) => {
     }
 
     const order = await Order.findByIdAndUpdate(
-      id,
+      req.params.id,
       { orderStatus: status },
       { new: true }
     );
