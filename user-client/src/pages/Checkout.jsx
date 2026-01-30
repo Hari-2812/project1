@@ -20,6 +20,7 @@ export default function Checkout() {
   });
 
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   /* ======================
      PREFILL USER
@@ -35,6 +36,9 @@ export default function Checkout() {
     }
   }, [user]);
 
+  /* ======================
+     PRICE CALCULATION
+  ====================== */
   const subtotal = cart.reduce(
     (sum, item) => sum + item.price * item.qty,
     0
@@ -80,73 +84,83 @@ export default function Checkout() {
     setError("");
     return true;
   };
+  console.log("VITE_API_URL =", import.meta.env.VITE_API_URL);
 
   /* ======================
-     PLACE ORDER (FIXED)
+     PLACE ORDER (SAFE)
   ====================== */
- const placeOrder = async () => {
-  if (!validate()) return;
+  const placeOrder = async () => {
+    if (!validate() || loading) return;
 
-  const token = localStorage.getItem("token");
-  if (!token) {
-    setError("Please login again");
-    return;
-  }
+    const token = localStorage.getItem("userToken");
 
-  // 🔥 FILTER ONLY VALID PRODUCTS
-  const orderItems = cart
-    .filter(item => item._id && item._id.length === 24)
-    .map(item => ({
-      productId: item._id, // ✅ VALID ObjectId
+    if (!token) {
+      setError("Session expired. Please login again.");
+      navigate("/login");
+      return;
+    }
+
+    const orderItems = cart.map((item) => ({
+      productId: item._id,
       name: item.name,
       quantity: item.qty,
       price: item.price,
     }));
 
-  if (orderItems.length === 0) {
-    setError("Invalid products in cart");
-    return;
-  }
+    try {
+      setLoading(true);
 
-  try {
-    const res = await fetch("http://localhost:5000/api/orders", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({
-        items: orderItems,
-        totalAmount: total,
-      }),
-    });
+      const res = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/orders`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            items: orderItems,
+            totalAmount: total,
+          }),
+        }
+      );
 
-    if (!res.ok) {
-      const err = await res.json();
-      throw new Error(err.message);
+      // ✅ SAFE RESPONSE HANDLING
+      const text = await res.text();
+      let data = {};
+
+      try {
+        data = text ? JSON.parse(text) : {};
+      } catch {
+        data = {};
+      }
+
+      if (!res.ok) {
+        throw new Error(data.message || "Order failed");
+      }
+
+      clearCart();
+
+      navigate("/order-success", {
+        state: {
+          transactionId: data.order?._id,
+          total,
+        },
+      });
+    } catch (err) {
+      console.error("ORDER ERROR:", err.message);
+      setError(err.message || "Something went wrong");
+    } finally {
+      setLoading(false);
     }
-
-    const order = await res.json();
-    clearCart();
-
-    navigate("/order-success", {
-      state: {
-        transactionId: order._id,
-        total,
-      },
-    });
-  } catch (err) {
-    console.error("Order error:", err);
-    setError(err.message || "Order failed");
-  }
-};
-
+  };
 
   return (
     <div className="checkout-container">
       <h1 className="checkout-title">Checkout</h1>
 
       <div className="checkout-layout">
+        {/* ================= SHIPPING ================= */}
         <div className="checkout-section">
           <h2 className="section-title">Shipping Details</h2>
 
@@ -231,6 +245,7 @@ export default function Checkout() {
           {error && <div className="form-error">{error}</div>}
         </div>
 
+        {/* ================= SUMMARY ================= */}
         <div className="checkout-section summary-section">
           <h2 className="section-title">Order Summary</h2>
 
@@ -254,8 +269,12 @@ export default function Checkout() {
             <span>₹{total}</span>
           </div>
 
-          <button className="place-order-btn" onClick={placeOrder}>
-            Place Order
+          <button
+            className="place-order-btn"
+            onClick={placeOrder}
+            disabled={loading}
+          >
+            {loading ? "Placing Order..." : "Place Order"}
           </button>
         </div>
       </div>

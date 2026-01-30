@@ -4,7 +4,6 @@ import {
   getAllOrders,
   getUnreadCount,
   markViewed,
-  getOrderById,
   updateOrderStatus,
 } from "../controllers/orderController.js";
 
@@ -20,20 +19,6 @@ router.post("/", authMiddleware, placeOrder);
 router.get("/", authMiddleware, adminMiddleware, getAllOrders);
 router.get("/unread-count", authMiddleware, adminMiddleware, getUnreadCount);
 router.put("/mark-viewed", authMiddleware, adminMiddleware, markViewed);
-
-/* 🔥 ADD THESE */
-router.get(
-  "/:id",
-  authMiddleware,
-  adminMiddleware,
-  getOrderById
-);
-
-router.put(
-  "/:id/status",
-  authMiddleware,
-  adminMiddleware,
-  updateOrderStatus
-);
+router.put("/:id/status", authMiddleware, adminMiddleware, updateOrderStatus);
 
 export default router;

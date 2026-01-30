@@ -1,4 +1,9 @@
-import { FaHeart, FaRegHeart, FaStar, FaShoppingCart } from "react-icons/fa";
+import {
+  FaHeart,
+  FaRegHeart,
+  FaStar,
+  FaShoppingCart,
+} from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { useFavorite } from "../context/FavoriteContext";
 import { useCart } from "../context/CartContext";
@@ -9,26 +14,31 @@ export default function ProductCard({ product }) {
   const { favorites, addFavorite, removeFavorite } = useFavorite();
   const { addToCart } = useCart();
 
-  const isFav = favorites.some((item) => item._id === product._id);
+  const isFav = favorites.some(
+    (item) => item._id === product._id
+  );
 
   const toggleFavorite = (e) => {
     e.stopPropagation();
-
-    if (isFav) {
-      removeFavorite(product._id);
-    } else {
-      addFavorite(product);
-    }
+    isFav ? removeFavorite(product._id) : addFavorite(product);
   };
 
   const handleAddToCart = (e) => {
     e.stopPropagation();
 
     addToCart({
-      ...product,
-      qty: 1,
+      _id: String(product._id), // ✅ force string
+      name: product.name,
+      price: product.price,
+      image: product.image,
       size: "M",
+      qty: 1,
     });
+  };
+
+  const buyNow = (e) => {
+    handleAddToCart(e);
+    navigate("/checkout");
   };
 
   return (
@@ -42,20 +52,13 @@ export default function ProductCard({ product }) {
         <h3>{product.name}</h3>
 
         <div className="rating">
-          <FaStar /> {product.rating}
+          <FaStar /> {product.rating || 4.5}
         </div>
 
         <p className="price">₹{product.price}</p>
 
         <div className="card-actions">
-          <button
-            className="buy-now"
-            onClick={(e) => {
-              e.stopPropagation();
-              addToCart({ ...product, qty: 1, size: "M" });
-              navigate("/checkout");
-            }}
-          >
+          <button className="buy-now" onClick={buyNow}>
             Buy Now
           </button>
 
@@ -64,7 +67,11 @@ export default function ProductCard({ product }) {
           </button>
 
           <button className="fav-btn" onClick={toggleFavorite}>
-            {isFav ? <FaHeart style={{ color: "#ff5e7e" }} /> : <FaRegHeart />}
+            {isFav ? (
+              <FaHeart style={{ color: "#ff5e7e" }} />
+            ) : (
+              <FaRegHeart />
+            )}
           </button>
         </div>
       </div>

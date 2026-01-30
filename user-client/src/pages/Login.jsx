@@ -1,77 +1,80 @@
-import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { loginUser } from '../services/authService'
-import '../styles/Login.css'
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { loginUser } from "../services/authService";
+import "../styles/Login.css";
 
 export default function Login() {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [show, setShow] = useState(false)
-  const [error, setError] = useState('')
-  const [loading, setLoading] = useState(false)
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [show, setShow] = useState(false);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   /* ======================
      VALIDATION
   ====================== */
   const validate = () => {
     if (!email || !password) {
-      setError('Email and password are required')
-      return false
+      setError("Email and password are required");
+      return false;
     }
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-      setError('Enter a valid email address')
-      return false
+      setError("Enter a valid email address");
+      return false;
     }
 
     if (password.length < 6) {
-      setError('Password must be at least 6 characters')
-      return false
+      setError("Password must be at least 6 characters");
+      return false;
     }
 
-    setError('')
-    return true
-  }
+    setError("");
+    return true;
+  };
 
   /* ======================
      LOGIN SUBMIT
   ====================== */
   const submit = async (e) => {
-    e.preventDefault()
-    if (!validate()) return
+    e.preventDefault();
+    if (!validate()) return;
 
     try {
-      setLoading(true)
+      setLoading(true);
 
-      const res = await loginUser({ email, password })
+      const res = await loginUser({ email, password });
 
-      if (res.token) {
-        localStorage.setItem('token', res.token)
-
-        if (res.user) {
-          localStorage.setItem('user', JSON.stringify(res.user))
-        }
-
-        navigate('/home')
-      } else {
-        setError(res.message || 'Login failed')
+      if (!res?.token) {
+        setError(res?.message || "Login failed");
+        return;
       }
-    } catch {
-      setError('Something went wrong')
+
+      // ✅ FIX: USE CORRECT TOKEN KEY
+      localStorage.setItem("userToken", res.token);
+
+      if (res.user) {
+        localStorage.setItem("user", JSON.stringify(res.user));
+      }
+
+      navigate("/home");
+    } catch (err) {
+      console.error("LOGIN ERROR:", err);
+      setError("Something went wrong");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   /* ======================
-     GOOGLE LOGIN (DISABLED SAFELY)
+     GOOGLE LOGIN (SAFE)
   ====================== */
   const googleLogin = () => {
-    setError('Google login is not enabled yet')
-  }
+    setError("Google login is not enabled yet");
+  };
 
   /* ======================
      UI
@@ -89,30 +92,27 @@ export default function Login() {
             type="email"
             placeholder="Email address"
             value={email}
-            onChange={e => setEmail(e.target.value)}
+            onChange={(e) => setEmail(e.target.value)}
           />
 
           <div className="password-field">
             <input
-              type={show ? 'text' : 'password'}
+              type={show ? "text" : "password"}
               placeholder="Password"
               value={password}
-              onChange={e => setPassword(e.target.value)}
+              onChange={(e) => setPassword(e.target.value)}
             />
-            <span
-              className="eye"
-              onClick={() => setShow(!show)}
-            >
-              {show ? '👁️' : '🙈'}
+            <span className="eye" onClick={() => setShow(!show)}>
+              {show ? "👁️" : "🙈"}
             </span>
           </div>
 
           <button className="primary-btn" disabled={loading}>
-            {loading ? 'Logging in...' : 'Login'}
+            {loading ? "Logging in..." : "Login"}
           </button>
         </form>
 
-        <p className="link" onClick={() => navigate('/forgot')}>
+        <p className="link" onClick={() => navigate("/forgot")}>
           Forgot password?
         </p>
 
@@ -124,9 +124,9 @@ export default function Login() {
 
         <p className="switch">
           Don’t have an account?
-          <span onClick={() => navigate('/register')}> Register</span>
+          <span onClick={() => navigate("/register")}> Register</span>
         </p>
       </div>
     </div>
-  )
+  );
 }
