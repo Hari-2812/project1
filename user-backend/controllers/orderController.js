@@ -1,5 +1,6 @@
 import Order from "../models/Order.js";
 import crypto from "crypto";
+import { io } from "../server.js"; // adjust path if needed
 
 /* =========================
    USER: PLACE ORDER
@@ -42,6 +43,7 @@ export const placeOrder = async (req, res) => {
       orderStatus: "Placed",
       isViewedByAdmin: false,
     });
+    io.emit("new-order"); // 🔥 THIS LINE
 
     /* ---------- RESPONSE ---------- */
     res.status(201).json({

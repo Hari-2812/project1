@@ -1,43 +1,60 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import "../styles/TrackOrder.css";
 
+/* ======================
+   API BASE (SAFE)
+====================== */
+const API_BASE =
+  import.meta.env.VITE_API_URL || "http://localhost:5000";
+
 const AdminTrackOrder = () => {
   const { id } = useParams();
-
-  // ✅ Correct API base
-  const API_BASE = "http://localhost:5000/api";
+  const navigate = useNavigate();
 
   const [order, setOrder] = useState(null);
-  const [status, setStatus] = useState("");
+  const [status, setStatus] = useState("Placed");
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState(false);
+
+  const adminToken = localStorage.getItem("adminToken");
 
   /* =========================
      FETCH ORDER DETAILS
   ========================= */
   const fetchOrderDetails = async () => {
     try {
+      if (!adminToken) {
+        navigate("/");
+        return;
+      }
+
       setLoading(true);
 
       const res = await axios.get(
-        `${API_BASE}/orders/${id}`,
+        `${API_BASE}/api/orders/${id}`,
         {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
+            Authorization: `Bearer ${adminToken}`,
           },
         }
       );
 
-      setOrder(res.data);
-      setStatus(res.data.orderStatus || "Placed");
+      // ✅ FIX: backend returns { success, order }
+      setOrder(res.data.order);
+      setStatus(res.data.order.orderStatus || "Placed");
     } catch (error) {
       console.error(
         "❌ Error loading order:",
         error.response?.data || error.message
       );
       alert("Failed to load order details");
+
+      if (error.response?.status === 401) {
+        localStorage.removeItem("adminToken");
+        navigate("/");
+      }
     } finally {
       setLoading(false);
     }
@@ -53,11 +70,11 @@ const AdminTrackOrder = () => {
       setUpdating(true);
 
       await axios.put(
-        `${API_BASE}/orders/${id}/status`,
+        `${API_BASE}/api/orders/${id}/status`,
         { status },
         {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
+            Authorization: `Bearer ${adminToken}`,
           },
         }
       );
@@ -89,35 +106,46 @@ const AdminTrackOrder = () => {
     <div className="track-order">
       <h2>🚚 Track & Update Order</h2>
 
+      {/* ================= ORDER INFO ================= */}
       <div className="status-box">
-        <p><strong>Order ID:</strong> {order._id}</p>
-        <p><strong>Total Amount:</strong> ₹{order.totalAmount}</p>
+        <p>
+          <strong>Order ID:</strong> {order.orderId}
+        </p>
+        <p>
+          <strong>Total Amount:</strong> ₹{order.totalAmount}
+        </p>
         <p>
           <strong>Current Status:</strong>{" "}
           <span
-            className={`status-${(order.orderStatus || "placed").toLowerCase()}`}
+            className={`status-${order.orderStatus.toLowerCase()}`}
           >
             {order.orderStatus}
           </span>
         </p>
+        <p>
+          <strong>Placed On:</strong>{" "}
+          {new Date(order.createdAt).toLocaleString("en-IN")}
+        </p>
       </div>
 
       {/* ================= STATUS UPDATE ================= */}
-      <select
-        value={status}
-        onChange={(e) => setStatus(e.target.value)}
-        disabled={updating}
-      >
-        <option value="Placed">Placed</option>
-        <option value="Confirmed">Confirmed</option>
-        <option value="Shipped">Shipped</option>
-        <option value="Delivered">Delivered</option>
-        <option value="Cancelled">Cancelled</option>
-      </select>
+      <div className="status-update">
+        <select
+          value={status}
+          onChange={(e) => setStatus(e.target.value)}
+          disabled={updating}
+        >
+          <option value="Placed">Placed</option>
+          <option value="Processing">Processing</option>
+          <option value="Shipped">Shipped</option>
+          <option value="Delivered">Delivered</option>
+          <option value="Cancelled">Cancelled</option>
+        </select>
 
-      <button onClick={updateStatus} disabled={updating}>
-        {updating ? "Updating..." : "Update Status"}
-      </button>
+        <button onClick={updateStatus} disabled={updating}>
+          {updating ? "Updating..." : "Update Status"}
+        </button>
+      </div>
 
       {/* ================= ITEMS ================= */}
       <div className="status-box">

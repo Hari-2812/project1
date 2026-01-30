@@ -1,14 +1,17 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import socket from "../services/socket";
 import "../styles/AdminOrders.css";
+
+const API_BASE =
+  import.meta.env.VITE_API_URL || "http://localhost:5000";
 
 const AdminOrders = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
 
   const navigate = useNavigate();
-  const API_BASE = "http://localhost:5000/api";
   const adminToken = localStorage.getItem("adminToken");
 
   /* =========================
@@ -22,13 +25,14 @@ const AdminOrders = () => {
     }
 
     try {
-      const res = await axios.get(`${API_BASE}/orders`, {
+      const res = await axios.get(`${API_BASE}/api/orders`, {
         headers: {
           Authorization: `Bearer ${adminToken}`,
         },
       });
 
-      setOrders(Array.isArray(res.data) ? res.data : []);
+      // ✅ FIX: backend returns { success, orders }
+      setOrders(Array.isArray(res.data.orders) ? res.data.orders : []);
     } catch (error) {
       console.error(
         "❌ Error fetching orders:",
@@ -45,7 +49,7 @@ const AdminOrders = () => {
   const markOrdersViewed = async () => {
     try {
       await axios.put(
-        `${API_BASE}/orders/mark-viewed`,
+        `${API_BASE}/api/orders/mark-viewed`,
         {},
         {
           headers: {
@@ -58,9 +62,21 @@ const AdminOrders = () => {
     }
   };
 
+  /* =========================
+     INITIAL LOAD + SOCKET
+  ========================= */
   useEffect(() => {
     fetchOrders();
     markOrdersViewed();
+
+    // 🔔 REAL-TIME UPDATE
+    socket.on("new-order", () => {
+      fetchOrders();
+    });
+
+    return () => {
+      socket.off("new-order");
+    };
   }, []);
 
   if (loading) return <p className="loading-text">Loading Orders...</p>;
@@ -90,7 +106,7 @@ const AdminOrders = () => {
             <tbody>
               {orders.map((o) => (
                 <tr key={o._id}>
-                  <td>{o._id}</td>
+                  <td>{o.orderId}</td>
 
                   <td>
                     {Array.isArray(o.items) && o.items.length > 0 ? (
@@ -107,9 +123,9 @@ const AdminOrders = () => {
                   <td>₹{o.totalAmount}</td>
 
                   <td
-                    className={`order-status status-${(o.orderStatus || "placed").toLowerCase()}`}
+                    className={`order-status status-${o.orderStatus.toLowerCase()}`}
                   >
-                    {o.orderStatus || "Placed"}
+                    {o.orderStatus}
                   </td>
 
                   <td>
