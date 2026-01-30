@@ -1,24 +1,46 @@
-import mongoose from "mongoose"
+import mongoose from "mongoose";
+
+const orderItemSchema = new mongoose.Schema(
+  {
+    productId: {
+      type: String, // 🔥 FIX HERE
+      required: true,
+    },
+    name: {
+      type: String,
+      required: true,
+    },
+    quantity: {
+      type: Number,
+      required: true,
+      min: 1,
+    },
+    price: {
+      type: Number,
+      required: true,
+    },
+  },
+  { _id: false }
+);
 
 const orderSchema = new mongoose.Schema(
   {
+    orderId: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+
     user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
     },
 
-    items: [
-      {
-        productId: {
-          type: mongoose.Schema.Types.ObjectId,
-          required: true,
-        },
-        name: String,
-        quantity: Number,
-        price: Number,
-      },
-    ],
+    items: {
+      type: [orderItemSchema],
+      required: true,
+    },
 
     totalAmount: {
       type: Number,
@@ -27,6 +49,7 @@ const orderSchema = new mongoose.Schema(
 
     orderStatus: {
       type: String,
+      enum: ["Placed", "Processing", "Shipped", "Delivered", "Cancelled"],
       default: "Placed",
     },
 
@@ -36,6 +59,6 @@ const orderSchema = new mongoose.Schema(
     },
   },
   { timestamps: true }
-)
+);
 
-export default mongoose.model("Order", orderSchema)
+export default mongoose.model("Order", orderSchema);
