@@ -1,9 +1,9 @@
 import axios from "axios";
 
-const API = "http://localhost:5000/api/offers"; 
-// ⬆️ change if your backend URL is different
+const API_BASE =
+  import.meta.env.VITE_API_URL || "http://localhost:5000";
 
 export const getOffers = async () => {
-  const res = await axios.get(API);
+  const res = await axios.get(`${API_BASE}/api/offers`);
   return res.data;
 };

@@ -8,20 +8,35 @@ export default function Offers() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
+  /* ======================
+     FETCH OFFERS
+  ====================== */
   const fetchOffers = async () => {
     setLoading(true);
     setError("");
 
     try {
-      const data = await getOffers();
+      const res = await getOffers();
 
-      // Handle both array & { offers: [] } responses
-      const list = Array.isArray(data) ? data : data.offers || [];
+      /*
+        Backend may return:
+        - { success: true, offers: [...] }
+        - { offers: [...] }
+        - [...]
+      */
+      const list =
+        Array.isArray(res)
+          ? res
+          : Array.isArray(res?.offers)
+          ? res.offers
+          : [];
 
-      // Show only active offers
-      setOffers(list.filter((o) => o.isActive));
+      // ✅ Only active offers for users
+      const activeOffers = list.filter((o) => o.isActive);
+
+      setOffers(activeOffers);
     } catch (err) {
-      console.error("Offer fetch failed", err);
+      console.error("❌ Offer fetch failed:", err);
       setError("Unable to load offers. Please try again.");
     } finally {
       setLoading(false);
@@ -32,10 +47,16 @@ export default function Offers() {
     fetchOffers();
   }, []);
 
-  /* ---------------- STATES ---------------- */
+  /* ======================
+     STATES
+  ====================== */
 
   if (loading) {
-    return <p className="offer-loading">🎁 Loading exciting offers...</p>;
+    return (
+      <div className="offer-loading">
+        🎁 Loading exciting offers...
+      </div>
+    );
   }
 
   if (error) {
@@ -55,8 +76,9 @@ export default function Offers() {
     );
   }
 
-  /* ---------------- UI ---------------- */
-
+  /* ======================
+     UI
+  ====================== */
   return (
     <div className="offers-container">
       <h1 className="offers-title">🔥 Latest Offers</h1>
