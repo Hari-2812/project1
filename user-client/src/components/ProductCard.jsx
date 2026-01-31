@@ -11,23 +11,27 @@ import "../styles/ProductCard.css";
 
 export default function ProductCard({ product }) {
   const navigate = useNavigate();
-  const { favorites, addFavorite, removeFavorite } = useFavorite();
+  const { toggleFavorite, isFavorite } = useFavorite();
   const { addToCart } = useCart();
 
-  const isFav = favorites.some(
-    (item) => item._id === product._id
-  );
+  const fav = isFavorite(product._id);
 
-  const toggleFavorite = (e) => {
+  /* ======================
+     FAVORITE
+  ====================== */
+  const handleFavorite = (e) => {
     e.stopPropagation();
-    isFav ? removeFavorite(product._id) : addFavorite(product);
+    toggleFavorite(product);
   };
 
+  /* ======================
+     CART
+  ====================== */
   const handleAddToCart = (e) => {
     e.stopPropagation();
 
     addToCart({
-      _id: String(product._id), // ✅ force string
+      _id: String(product._id), // keep consistent
       name: product.name,
       price: product.price,
       image: product.image,
@@ -66,8 +70,8 @@ export default function ProductCard({ product }) {
             <FaShoppingCart /> Add
           </button>
 
-          <button className="fav-btn" onClick={toggleFavorite}>
-            {isFav ? (
+          <button className="fav-btn" onClick={handleFavorite}>
+            {fav ? (
               <FaHeart style={{ color: "#ff5e7e" }} />
             ) : (
               <FaRegHeart />
