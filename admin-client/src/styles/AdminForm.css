@@ -1,0 +1,157 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+
+/* =========================
+   PAGE WRAPPER
+========================= */
+.admin-page {
+  min-height: calc(100vh - 80px);
+  padding: 40px 20px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+  font-family: "Inter", sans-serif;
+}
+
+/* =========================
+   FORM CARD
+========================= */
+.admin-form {
+  width: 100%;
+  max-width: 420px;
+  padding: 28px 26px;
+
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.35);
+  color: #fff;
+
+  animation: fadeUp 0.4s ease;
+}
+
+/* =========================
+   TITLE
+========================= */
+.admin-form h2 {
+  text-align: center;
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 22px;
+}
+
+/* =========================
+   FORM GROUP
+========================= */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+
+.form-group label {
+  font-size: 13px;
+  opacity: 0.85;
+}
+
+/* =========================
+   INPUTS
+========================= */
+.admin-form input,
+.admin-form textarea {
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: none;
+  outline: none;
+
+  background: rgba(255, 255, 255, 0.18);
+  color: #fff;
+  font-size: 14px;
+}
+
+.admin-form input::placeholder,
+.admin-form textarea::placeholder {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.admin-form textarea {
+  resize: none;
+  min-height: 90px;
+}
+
+/* =========================
+   BUTTON
+========================= */
+.admin-form button {
+  width: 100%;
+  margin-top: 10px;
+  padding: 12px;
+
+  border-radius: 30px;
+  border: none;
+  cursor: pointer;
+
+  font-size: 15px;
+  font-weight: 600;
+
+  background: linear-gradient(135deg, #00c6ff, #66e0ff);
+  color: #0f2027;
+
+  transition: all 0.25s ease;
+}
+
+.admin-form button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 26px rgba(0, 198, 255, 0.6);
+}
+
+.admin-form button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* =========================
+   ERROR
+========================= */
+.form-error {
+  background: rgba(255, 0, 0, 0.15);
+  border: 1px solid rgba(255, 0, 0, 0.3);
+  padding: 10px;
+  border-radius: 10px;
+  color: #ffdcdc;
+  font-size: 13px;
+  margin-bottom: 14px;
+  text-align: center;
+}
+
+/* =========================
+   ANIMATION
+========================= */
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* =========================
+   MOBILE
+========================= */
+@media (max-width: 480px) {
+  .admin-form {
+    padding: 22px 18px;
+  }
+
+  .admin-form h2 {
+    font-size: 20px;
+  }
+}

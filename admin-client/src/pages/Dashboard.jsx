@@ -46,12 +46,15 @@ const Dashboard = () => {
         }
       );
 
+      // ✅ FIX: read from res.data.data
+      const data = res.data.data;
+
       setStats({
-        unreadOrders: res.data.unreadOrders || 0,
-        totalOrders: res.data.totalOrders || 0,
-        monthlyRevenue: res.data.monthlyRevenue || 0,
-        pendingOrders: res.data.pendingOrders || 0,
-        totalProducts: res.data.totalProducts || 0,
+        unreadOrders: data.unreadOrders || 0,
+        totalOrders: data.totalOrders || 0,
+        monthlyRevenue: data.monthlyRevenue || 0,
+        pendingOrders: data.pendingOrders || 0,
+        totalProducts: data.totalProducts || 0,
       });
     } catch (err) {
       console.error("❌ Dashboard fetch failed", err);
@@ -64,10 +67,7 @@ const Dashboard = () => {
   useEffect(() => {
     fetchDashboardStats();
 
-    // 🔔 Real-time order sync
-    socket.on("new-order", () => {
-      fetchDashboardStats(); // ✅ re-sync from backend
-    });
+    socket.on("new-order", fetchDashboardStats);
 
     return () => {
       socket.off("new-order");
@@ -126,45 +126,27 @@ const Dashboard = () => {
         <h2>Admin Actions</h2>
 
         <div className="action-grid">
-          <button
-            className="action-card"
-            onClick={() => navigate("/admin-orders")}
-          >
+          <button className="action-card" onClick={() => navigate("/admin-orders")}>
             📦 Track Orders
           </button>
 
-          <button
-            className="action-card"
-            onClick={() => navigate("/admin-payments")}
-          >
+          <button className="action-card" onClick={() => navigate("/admin-payments")}>
             💳 Payment Status
           </button>
 
-          <button
-            className="action-card"
-            onClick={() => navigate("/add-product")}
-          >
+          <button className="action-card" onClick={() => navigate("/add-product")}>
             ➕ Add Product
           </button>
 
-          <button
-            className="action-card"
-            onClick={() => navigate("/admin-offers")}
-          >
+          <button className="action-card" onClick={() => navigate("/admin-offers")}>
             🎁 Create Offer
           </button>
 
-          <button
-            className="action-card"
-            onClick={() => navigate("/admin-users")}
-          >
+          <button className="action-card" onClick={() => navigate("/admin-users")}>
             👥 Customers
           </button>
 
-          <button
-            className="action-card"
-            onClick={() => navigate("/admin-reports")}
-          >
+          <button className="action-card" onClick={() => navigate("/admin-reports")}>
             📊 Reports
           </button>
         </div>
