@@ -13,6 +13,7 @@ import OrderSuccess from "./pages/Order";
 import Boys from "./pages/BoysProducts"; // ✅ ADDED
 import Profile from "./pages/Profile";
 import EditProfile from "./pages/EditProfile";
+import Contact from "./pages/Contact";
 
 import Header from "./components/Header";
 
@@ -57,7 +58,14 @@ function Layout() {
             </PrivateRoute>
           }
         />
-        
+        <Route
+          path="/contact"
+          element={
+            <PrivateRoute>
+              <Contact />
+            </PrivateRoute>
+          }
+        />
         {/* ✅ BOYS PAGE */}
         <Route
           path="/boys"

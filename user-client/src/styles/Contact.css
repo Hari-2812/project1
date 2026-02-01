@@ -1,0 +1,117 @@
+/* ===== CONTACT PAGE WRAPPER ===== */
+.contact-page {
+  max-width: 1100px;
+  margin: 60px auto;
+  padding: 20px;
+  font-family: "Poppins", sans-serif;
+}
+
+/* ===== PAGE TITLE ===== */
+.contact-page h2 {
+  text-align: center;
+  font-size: 32px;
+  font-weight: 600;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.contact-page p {
+  text-align: center;
+  color: #666;
+  margin-bottom: 30px;
+}
+
+/* ===== FORM ===== */
+.contact-form {
+  max-width: 600px;
+  margin: 0 auto;
+  background: #ffffff;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+}
+
+/* ===== INPUTS ===== */
+.contact-form input,
+.contact-form textarea {
+  width: 100%;
+  padding: 14px 16px;
+  margin-bottom: 16px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  font-size: 15px;
+  transition: border-color 0.3s, box-shadow 0.3s;
+  outline: none;
+}
+
+.contact-form textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+/* ===== FOCUS EFFECT ===== */
+.contact-form input:focus,
+.contact-form textarea:focus {
+  border-color: #ff6b6b;
+  box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.15);
+}
+
+/* ===== SUBMIT BUTTON ===== */
+.contact-form button {
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(135deg, #ff6b6b, #ff8787);
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #fff;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease,
+    background 0.3s ease;
+}
+
+/* ===== BUTTON HOVER ===== */
+.contact-form button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(255, 107, 107, 0.35);
+}
+
+/* ===== DISABLED STATE ===== */
+.contact-form button:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+}
+
+/* ===== SUCCESS MESSAGE ===== */
+.success {
+  margin-top: 15px;
+  text-align: center;
+  font-weight: 500;
+  color: #2ecc71;
+}
+
+/* ===== ERROR MESSAGE (OPTIONAL) ===== */
+.error {
+  margin-top: 15px;
+  text-align: center;
+  font-weight: 500;
+  color: #e74c3c;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .contact-page {
+    margin: 30px auto;
+  }
+
+  .contact-form {
+    padding: 20px;
+  }
+
+  .contact-page h2 {
+    font-size: 26px;
+  }
+}

@@ -30,36 +30,37 @@ const Dashboard = () => {
   /* ======================
       FETCH DASHBOARD DATA
   ====================== */
-  const fetchDashboardStats = async () => {
-    try {
-      if (!adminToken) {
-        logout();
-        return;
-      }
-
-      const res = await axios.get(
-        `${API_BASE}/admin/dashboard`,
-        {
-          headers: {
-            Authorization: `Bearer ${adminToken}`,
-          },
-        }
-      );
-
-      // ✅ FIX: read from res.data.data
-      const data = res.data.data;
-
-      setStats({
-        unreadOrders: data.unreadOrders || 0,
-        totalOrders: data.totalOrders || 0,
-        monthlyRevenue: data.monthlyRevenue || 0,
-        pendingOrders: data.pendingOrders || 0,
-        totalProducts: data.totalProducts || 0,
-      });
-    } catch (err) {
-      console.error("❌ Dashboard fetch failed", err);
+const fetchDashboardStats = async () => {
+  try {
+    if (!adminToken) {
+      logout();
+      return;
     }
-  };
+
+    const res = await axios.get(`${API_BASE}/admin/dashboard`, {
+      headers: {
+        Authorization: `Bearer ${adminToken}`,
+      },
+    });
+
+    console.log("Dashboard API response:", res.data);
+
+    // ✅ API returns flat object — USE IT DIRECTLY
+    const statsData = res.data;
+
+    setStats({
+      unreadOrders: statsData.unreadOrders ?? 0,
+      totalOrders: statsData.totalOrders ?? 0,
+      monthlyRevenue: statsData.monthlyRevenue ?? 0,
+      pendingOrders: statsData.pendingOrders ?? 0,
+      totalProducts: statsData.totalProducts ?? 0,
+    });
+  } catch (err) {
+    console.error("❌ Dashboard fetch failed", err);
+  }
+};
+
+
 
   /* ======================
       SOCKET + INITIAL LOAD

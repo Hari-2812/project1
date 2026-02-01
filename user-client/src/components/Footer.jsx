@@ -113,16 +113,27 @@ export default function Footer({ showNewsletter = false }) {
             <ul className="contact-info">
               <li>
                 <FaMapMarkerAlt className="contact-icon" />
-                <span>123 Kids Avenue, Fashion District, NY 10001</span>
+                <a
+                  href="https://www.google.com/maps?q=123+Kids+Avenue+NY+10001"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  123 Kids Avenue, Fashion District, NY 10001
+                </a>
+
               </li>
               <li>
                 <FaPhone className="contact-icon" />
-                <span>+1 (555) 123-4567</span>
+                <a href="tel:+919361876698">+91 9361876698</a>
               </li>
+
               <li>
                 <FaEnvelope className="contact-icon" />
-                <span>support@kidsstore.com</span>
+                <a href="mailto:support@kidsstore.com">
+                  support@kidsstore.com
+                </a>
               </li>
+
             </ul>
           </div>
         </div>
