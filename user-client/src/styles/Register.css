@@ -102,6 +102,24 @@ body {
   font-weight: 600;
   cursor: pointer;
 }
+/* Password Strength Text */
+.strength-text {
+  margin-top: 6px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.strength-text.weak {
+  color: #f87171; /* red */
+}
+
+.strength-text.medium {
+  color: #facc15; /* yellow */
+}
+
+.strength-text.strong {
+  color: #4ade80; /* green */
+}
 
 
 /* Switch */

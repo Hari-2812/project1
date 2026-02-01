@@ -4,21 +4,13 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import AddProduct from "./pages/AddProduct";
-
 import AdminOrders from "./pages/AdminOrders";
 import AdminTrackOrder from "./pages/AdminTrackOrder";
-
-/* 🆕 OFFERS */
 import AdminOffers from "./pages/AdminOffers";
 import AddOffer from "./pages/AddOffer";
 
-/* =========================
-   PROTECTED ROUTE
-========================= */
-const PrivateRoute = ({ children }) => {
-  const token = localStorage.getItem("adminToken");
-  return token ? children : <Navigate to="/" replace />;
-};
+/* ================= ROUTE GUARD ================= */
+import PrivateRoute from "./routes/PrivateRoute";
 
 const App = () => {
   return (
@@ -26,7 +18,7 @@ const App = () => {
       <Routes>
 
         {/* =====================
-            PUBLIC
+            PUBLIC ROUTE
         ====================== */}
         <Route path="/" element={<Login />} />
 
@@ -76,7 +68,7 @@ const App = () => {
         />
 
         {/* =====================
-            OFFERS (🆕)
+            OFFERS
         ====================== */}
         <Route
           path="/admin-offers"
@@ -97,7 +89,7 @@ const App = () => {
         />
 
         {/* =====================
-            FALLBACK
+            FALLBACK ROUTE
         ====================== */}
         <Route path="*" element={<Navigate to="/" replace />} />
 

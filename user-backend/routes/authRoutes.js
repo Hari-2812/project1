@@ -1,6 +1,7 @@
 import express from "express";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import passport from "passport";
 import User from "../models/User.js";
 
 const router = express.Router();
@@ -68,22 +69,14 @@ router.post("/login", async (req, res) => {
 });
 
 /* =========================
-   ADMIN LOGIN (EASY & SAFE)
+   ADMIN LOGIN
 ========================= */
 router.post("/admin/login", async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    if (!email || !password) {
-      return res.status(400).json({
-        success: false,
-        message: "Email and password required",
-      });
-    }
-
     const admin = await User.findOne({ email });
 
-    // ❌ Block if not admin
     if (!admin || admin.role !== "admin") {
       return res.status(403).json({
         success: false,
@@ -127,13 +120,6 @@ router.post("/register", async (req, res) => {
   try {
     const { name, email, password } = req.body;
 
-    if (!name || !email || !password) {
-      return res.status(400).json({
-        success: false,
-        message: "All fields required",
-      });
-    }
-
     const existing = await User.findOne({ email });
     if (existing) {
       return res.status(409).json({
@@ -154,12 +140,6 @@ router.post("/register", async (req, res) => {
     res.status(201).json({
       success: true,
       message: "Registered successfully",
-      user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
-      },
     });
   } catch (err) {
     console.error("REGISTER ERROR:", err);
@@ -169,5 +149,38 @@ router.post("/register", async (req, res) => {
     });
   }
 });
+
+/* =========================
+   GOOGLE LOGIN
+========================= */
+router.get(
+  "/google",
+  passport.authenticate("google", {
+    scope: ["profile", "email"],
+  })
+);
+
+router.get("/logout", (req, res) => {
+  try {
+    if (req.logout) {
+      req.logout(() => {});
+    }
+    res.clearCookie("connect.sid");
+    res.json({ success: true });
+  } catch {
+    res.json({ success: true });
+  }
+});
+
+router.get(
+  "/google/callback",
+  passport.authenticate("google", { session: false }),
+  (req, res) => {
+    const token = createToken(req.user);
+    res.redirect(
+      `http://localhost:5173/google-success?token=${token}`
+    );
+  }
+);
 
 export default router;

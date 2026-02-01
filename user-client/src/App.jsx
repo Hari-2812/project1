@@ -1,4 +1,10 @@
-import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  Navigate,
+  useLocation,
+} from "react-router-dom";
 
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -10,20 +16,21 @@ import Checkout from "./pages/Checkout";
 import Favorites from "./pages/Favorites";
 import Offers from "./pages/Offers";
 import OrderSuccess from "./pages/Order";
-import Boys from "./pages/BoysProducts"; // ✅ ADDED
+import Boys from "./pages/BoysProducts";
 import Profile from "./pages/Profile";
 import EditProfile from "./pages/EditProfile";
 import Contact from "./pages/Contact";
+import GoogleSuccess from "./pages/GoogleSuccess";
 
 import Header from "./components/Header";
 
 /* 🔐 Private Route */
 const PrivateRoute = ({ children }) => {
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem("userToken"); // ✅ FIXED
   return token ? children : <Navigate to="/" replace />;
 };
 
-/* 🔹 Wrapper to control Header visibility */
+/* 🔹 Layout Wrapper */
 function Layout() {
   const location = useLocation();
 
@@ -35,13 +42,15 @@ function Layout() {
       {!shouldHideHeader && <Header />}
 
       <Routes>
-        {/* PUBLIC */}
+        {/* PUBLIC ROUTES */}
         <Route path="/" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/forgot" element={<ForgotPassword />} />
-        <Route path="/profile" element={<Profile />} />
 
-        {/* PROTECTED */}
+        {/* 🔑 GOOGLE CALLBACK (PUBLIC) */}
+        <Route path="/google-success" element={<GoogleSuccess />} />
+
+        {/* PROTECTED ROUTES */}
         <Route
           path="/home"
           element={
@@ -50,6 +59,16 @@ function Layout() {
             </PrivateRoute>
           }
         />
+
+        <Route
+          path="/profile"
+          element={
+            <PrivateRoute>
+              <Profile />
+            </PrivateRoute>
+          }
+        />
+
         <Route
           path="/profile/edit"
           element={
@@ -58,6 +77,7 @@ function Layout() {
             </PrivateRoute>
           }
         />
+
         <Route
           path="/contact"
           element={
@@ -66,7 +86,7 @@ function Layout() {
             </PrivateRoute>
           }
         />
-        {/* ✅ BOYS PAGE */}
+
         <Route
           path="/boys"
           element={

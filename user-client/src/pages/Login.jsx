@@ -13,6 +13,14 @@ export default function Login() {
   const navigate = useNavigate();
 
   /* ======================
+     HELPERS FOR UI HINTS
+  ====================== */
+  const emailValid =
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) && email.length > 0;
+
+  const passwordValid = password.length >= 6;
+
+  /* ======================
      VALIDATION
   ====================== */
   const validate = () => {
@@ -21,13 +29,12 @@ export default function Login() {
       return false;
     }
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
+    if (!emailValid) {
       setError("Enter a valid email address");
       return false;
     }
 
-    if (password.length < 6) {
+    if (!passwordValid) {
       setError("Password must be at least 6 characters");
       return false;
     }
@@ -53,7 +60,7 @@ export default function Login() {
         return;
       }
 
-      // ✅ FIX: USE CORRECT TOKEN KEY
+      // ✅ STORE TOKEN
       localStorage.setItem("userToken", res.token);
 
       if (res.user) {
@@ -70,11 +77,12 @@ export default function Login() {
   };
 
   /* ======================
-     GOOGLE LOGIN (SAFE)
+     GOOGLE LOGIN
   ====================== */
   const googleLogin = () => {
-    setError("Google login is not enabled yet");
-  };
+  window.location.href =
+    "http://localhost:5000/api/auth/google?prompt=select_account";
+};
 
   /* ======================
      UI
@@ -88,13 +96,26 @@ export default function Login() {
         {error && <p className="login-error">{error}</p>}
 
         <form onSubmit={submit}>
+          {/* EMAIL */}
           <input
             type="email"
             placeholder="Email address"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
+          <p
+            className={`input-hint ${
+              email.length === 0
+                ? ""
+                : emailValid
+                ? "valid"
+                : "invalid"
+            }`}
+          >
+            Enter a valid email (example@domain.com)
+          </p>
 
+          {/* PASSWORD */}
           <div className="password-field">
             <input
               type={show ? "text" : "password"}
@@ -106,6 +127,17 @@ export default function Login() {
               {show ? "👁️" : "🙈"}
             </span>
           </div>
+          <p
+            className={`input-hint ${
+              password.length === 0
+                ? ""
+                : passwordValid
+                ? "valid"
+                : "invalid"
+            }`}
+          >
+            Password must be at least 6 characters
+          </p>
 
           <button className="primary-btn" disabled={loading}>
             {loading ? "Logging in..." : "Login"}

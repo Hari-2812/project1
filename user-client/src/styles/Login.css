@@ -50,7 +50,7 @@ body {
 .login-box input {
   width: 100%;
   padding: 14px 44px 14px 16px;
-  margin-bottom: 16px;
+  margin-bottom: 6px;
   border-radius: 10px;
   border: none;
   outline: none;
@@ -68,6 +68,25 @@ body {
   outline: 1px solid rgba(255,255,255,0.45);
 }
 
+/* ======================
+   INPUT HELPER TEXT
+====================== */
+.input-hint {
+  font-size: 12px;
+  margin-bottom: 14px;
+  padding-left: 4px;
+  color: rgba(255,255,255,0.6);
+}
+
+/* Valid / Invalid States */
+.input-hint.valid {
+  color: #4ade80; /* green */
+}
+
+.input-hint.invalid {
+  color: #fca5a5; /* red */
+}
+
 /* Password Field */
 .password-field {
   position: relative;
@@ -76,7 +95,7 @@ body {
 .password-field .eye {
   position: absolute;
   right: 14px;
-  top: 50%;
+  top: 36%;
   transform: translateY(-50%);
   font-size: 18px;
   cursor: pointer;
@@ -140,11 +159,6 @@ body {
   gap: 10px;
   cursor: pointer;
   transition: box-shadow 0.25s ease, transform 0.25s ease;
-}
-
-.google-btn img {
-  width: 18px;
-  height: 18px;
 }
 
 .google-btn:hover {

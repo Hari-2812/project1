@@ -6,6 +6,10 @@ import { createServer } from "http";
 import { Server } from "socket.io";
 import path from "path";
 import { fileURLToPath } from "url";
+import jwt from "jsonwebtoken";
+import passport from "passport";
+
+import "./config/passport.js";
 
 /* ===== ROUTES ===== */
 import authRoutes from "./routes/authRoutes.js";
@@ -16,7 +20,6 @@ import userRoutes from "./routes/userRoutes.js";
 import offerRoutes from "./routes/offerRoutes.js";
 import contactRoutes from "./routes/contactRoutes.js";
 
-
 dotenv.config();
 
 /* =========================
@@ -26,7 +29,7 @@ const app = express();
 const httpServer = createServer(app);
 
 /* =========================
-   SOCKET.IO (FIXED)
+   SOCKET.IO (JWT SECURED)
 ========================= */
 const io = new Server(httpServer, {
   cors: {
@@ -40,6 +43,26 @@ const io = new Server(httpServer, {
   },
 });
 
+/* 🔐 SOCKET AUTH MIDDLEWARE */
+io.use((socket, next) => {
+  try {
+    const token = socket.handshake.auth?.token;
+
+    if (!token) {
+      throw new Error("No token provided");
+    }
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    socket.user = decoded;
+
+    next();
+  } catch (error) {
+    console.log("AUTH MIDDLEWARE ERROR:", error.message);
+    next(new Error("Authentication failed"));
+  }
+});
+
+/* 🔌 SOCKET CONNECTION */
 io.on("connection", (socket) => {
   console.log("🟢 Socket connected:", socket.id);
 
@@ -70,6 +93,11 @@ app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 
 /* =========================
+   PASSPORT INIT (IMPORTANT)
+========================= */
+app.use(passport.initialize());
+
+/* =========================
    STATIC FILES
 ========================= */
 const __filename = fileURLToPath(import.meta.url);
@@ -78,7 +106,7 @@ const __dirname = path.dirname(__filename);
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 /* =========================
-   ROUTES (ORDER FIXED)
+   ROUTES
 ========================= */
 app.use("/api/auth", authRoutes);
 app.use("/api/products", productRoutes);

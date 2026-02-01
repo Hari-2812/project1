@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import {
   FaShoppingCart,
   FaHeart,
@@ -17,7 +17,6 @@ import SearchBox from "./SearchBox";
 export default function Header() {
   const { cart } = useCart();
   const { favorites } = useFavorite();
-  const navigate = useNavigate();
 
   const [showMenu, setShowMenu] = useState(false);
 
@@ -40,12 +39,28 @@ export default function Header() {
   }, [favorites]);
 
   /* ======================
-     LOGOUT
+     LOGOUT (GOOGLE SAFE)
   ====================== */
-  const logout = () => {
+  const logout = async () => {
+    try {
+      // 🔑 clear google/passport session
+      await fetch("http://localhost:5000/api/auth/logout", {
+        method: "GET",
+        credentials: "include",
+      });
+    } catch (err) {
+      console.log("Logout request failed (safe to ignore)");
+    }
+
+    // 🔥 clear local auth data
     localStorage.removeItem("userToken");
+    localStorage.removeItem("user");
+    localStorage.removeItem("adminToken");
+
     setShowMenu(false);
-    navigate("/login");
+
+    // 🔄 hard reload to reset state
+    window.location.href = "/";
   };
 
   return (
@@ -116,7 +131,7 @@ export default function Header() {
             )}
           </div>
         ) : (
-          <Link to="/login" className="profile-avatar">
+          <Link to="/" className="profile-avatar">
             <FaUser />
           </Link>
         )}
