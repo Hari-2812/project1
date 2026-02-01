@@ -41,3 +41,5 @@ dist
 *.sw?
 .env
 firebaseKey.json
+.env.local
+.env
