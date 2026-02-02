@@ -9,27 +9,28 @@ import { useFavorite } from "../context/FavoriteContext";
 import { useCart } from "../context/CartContext";
 import "../styles/ProductCard.css";
 
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
+const BACKEND_URL =
+  import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
 
 export default function ProductCard({ product }) {
   const navigate = useNavigate();
   const { toggleFavorite, isFavorite } = useFavorite();
   const { addToCart } = useCart();
 
-  console.log("FULL PRODUCT OBJECT:", product);
- console.log("RAW IMAGES ARRAY:", product?.images);
+  if (!product) return null;
 
-const imageSrc =
-  product?.images && product.images.length > 0
-    ? product.images[0].startsWith("http")
+  /* 🖼️ SAFE IMAGE HANDLING */
+  const image =
+    Array.isArray(product?.images) &&
+    typeof product.images[0] === "string"
       ? product.images[0]
-      : `${BACKEND_URL}${product.images[0]}`
-    : null;
+      : null;
 
-console.log("FINAL IMAGE SRC:", imageSrc);
-
-
-  console.log("FINAL IMAGE SRC:", imageSrc);
+  const imageSrc = image
+    ? image.startsWith("http")
+      ? image
+      : `${BACKEND_URL}${image}`
+    : "/placeholder.png";
 
   const fav = isFavorite(product._id);
 
@@ -62,9 +63,8 @@ console.log("FINAL IMAGE SRC:", imageSrc);
     >
       <img
         src={imageSrc}
-        alt={product?.name}
+        alt={product?.name || "Product"}
         onError={(e) => {
-          console.error("IMAGE FAILED TO LOAD:", imageSrc);
           e.currentTarget.src = "/placeholder.png";
         }}
       />
@@ -88,7 +88,11 @@ console.log("FINAL IMAGE SRC:", imageSrc);
           </button>
 
           <button className="fav-btn" onClick={handleFavorite}>
-            {fav ? <FaHeart style={{ color: "#ff5e7e" }} /> : <FaRegHeart />}
+            {fav ? (
+              <FaHeart style={{ color: "#ff5e7e" }} />
+            ) : (
+              <FaRegHeart />
+            )}
           </button>
         </div>
       </div>

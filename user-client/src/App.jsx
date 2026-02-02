@@ -25,6 +25,7 @@ import Shipping from "./pages/Shipping";
 import About from "./pages/About";
 import Returns from "./pages/Returns";
 import FAQ from "./pages/FAQ";
+import SearchResults from "./pages/SearchResults";
 
 import Header from "./components/Header";
 
@@ -54,8 +55,8 @@ function Layout() {
         <Route path="/about" element={<About />} />
         <Route path="/returns" element={<Returns />} />
         <Route path="/faq" element={<FAQ />} />
+        <Route path="/search" element={<SearchResults />} />
 
-        
         {/* 🔑 GOOGLE CALLBACK (PUBLIC) */}
         <Route path="/google-success" element={<GoogleSuccess />} />
 
