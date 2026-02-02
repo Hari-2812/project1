@@ -23,6 +23,8 @@ import Contact from "./pages/Contact";
 import GoogleSuccess from "./pages/GoogleSuccess";
 import Shipping from "./pages/Shipping";
 import About from "./pages/About";
+import Returns from "./pages/Returns";
+
 
 import Header from "./components/Header";
 
@@ -50,7 +52,8 @@ function Layout() {
         <Route path="/forgot" element={<ForgotPassword />} />
         <Route path="/shipping" element={<Shipping />} />
         <Route path="/about" element={<About />} />
-        
+        <Route path="/returns" element={<Returns />} />
+
         {/* 🔑 GOOGLE CALLBACK (PUBLIC) */}
         <Route path="/google-success" element={<GoogleSuccess />} />
 

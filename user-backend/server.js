@@ -21,6 +21,8 @@ import offerRoutes from "./routes/offerRoutes.js";
 import contactRoutes from "./routes/contactRoutes.js";
 import shippingRoutes from "./routes/shippingRoutes.js";
 import aboutRoutes from "./routes/aboutRoutes.js";
+import returnRouters from "./routes/returnRoutes.js";
+
 dotenv.config();
 
 /* =========================
@@ -118,6 +120,8 @@ app.use("/api/offers", offerRoutes);
 app.use("/api/contact", contactRoutes);
 app.use("/api/shipping", shippingRoutes);
 app.use("/api/about", aboutRoutes);
+app.use("/api/returns", returnRouters);
+
 
 /* =========================
    HEALTH CHECK
