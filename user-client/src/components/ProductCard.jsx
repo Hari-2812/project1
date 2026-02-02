@@ -9,32 +9,42 @@ import { useFavorite } from "../context/FavoriteContext";
 import { useCart } from "../context/CartContext";
 import "../styles/ProductCard.css";
 
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
+
 export default function ProductCard({ product }) {
   const navigate = useNavigate();
   const { toggleFavorite, isFavorite } = useFavorite();
   const { addToCart } = useCart();
 
+  console.log("FULL PRODUCT OBJECT:", product);
+ console.log("RAW IMAGES ARRAY:", product?.images);
+
+const imageSrc =
+  product?.images && product.images.length > 0
+    ? product.images[0].startsWith("http")
+      ? product.images[0]
+      : `${BACKEND_URL}${product.images[0]}`
+    : null;
+
+console.log("FINAL IMAGE SRC:", imageSrc);
+
+
+  console.log("FINAL IMAGE SRC:", imageSrc);
+
   const fav = isFavorite(product._id);
 
-  /* ======================
-     FAVORITE
-  ====================== */
   const handleFavorite = (e) => {
     e.stopPropagation();
     toggleFavorite(product);
   };
 
-  /* ======================
-     CART
-  ====================== */
   const handleAddToCart = (e) => {
     e.stopPropagation();
-
     addToCart({
-      _id: String(product._id), // keep consistent
+      _id: String(product._id),
       name: product.name,
       price: product.price,
-      image: product.image,
+      image: imageSrc,
       size: "M",
       qty: 1,
     });
@@ -50,7 +60,14 @@ export default function ProductCard({ product }) {
       className="product-card"
       onClick={() => navigate(`/product/${product._id}`)}
     >
-      <img src={product.image} alt={product.name} />
+      <img
+        src={imageSrc}
+        alt={product?.name}
+        onError={(e) => {
+          console.error("IMAGE FAILED TO LOAD:", imageSrc);
+          e.currentTarget.src = "/placeholder.png";
+        }}
+      />
 
       <div className="product-info">
         <h3>{product.name}</h3>
@@ -71,11 +88,7 @@ export default function ProductCard({ product }) {
           </button>
 
           <button className="fav-btn" onClick={handleFavorite}>
-            {fav ? (
-              <FaHeart style={{ color: "#ff5e7e" }} />
-            ) : (
-              <FaRegHeart />
-            )}
+            {fav ? <FaHeart style={{ color: "#ff5e7e" }} /> : <FaRegHeart />}
           </button>
         </div>
       </div>
