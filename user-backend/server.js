@@ -19,7 +19,8 @@ import adminRoutes from "./routes/adminRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import offerRoutes from "./routes/offerRoutes.js";
 import contactRoutes from "./routes/contactRoutes.js";
-
+import shippingRoutes from "./routes/shippingRoutes.js";
+import aboutRoutes from "./routes/aboutRoutes.js";
 dotenv.config();
 
 /* =========================
@@ -115,6 +116,8 @@ app.use("/api/admin", adminRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/offers", offerRoutes);
 app.use("/api/contact", contactRoutes);
+app.use("/api/shipping", shippingRoutes);
+app.use("/api/about", aboutRoutes);
 
 /* =========================
    HEALTH CHECK
