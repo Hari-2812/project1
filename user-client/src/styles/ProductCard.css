@@ -123,3 +123,29 @@
     font-size: 16px;
   }
 }
+
+/* 1. New Wrapper Class */
+.card-image-wrapper {
+  width: 100%;
+  height: 320px; /* Force the height here */
+  background-color: rgba(255, 255, 255, 0.05); /* Show a grey box if image fails */
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 2. Update Image Style */
+.product-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+/* 3. Media Query for Mobile (Match your existing logic) */
+@media (max-width: 600px) {
+  .card-image-wrapper {
+    height: 260px; /* Adjust wrapper height for mobile */
+  }
+}
