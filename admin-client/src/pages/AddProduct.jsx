@@ -10,6 +10,8 @@ const AGE_SIZES = [
   "7-8Y","9-10Y","11-12Y","13-14Y","14-15Y"
 ];
 
+const MAX_IMAGES = 4;
+
 const emptyRow = () => ({
   name: "",
   gender: "Boys",
@@ -20,7 +22,7 @@ const emptyRow = () => ({
   description: "",
   productCode: "",
   isFeatured: false,
-  images: [],
+  images: [], // File objects
 });
 
 /* ======================
@@ -67,22 +69,23 @@ export default function AddProduct() {
   };
 
   /* ======================
-     FILE HANDLER
+     IMAGE HANDLER (MAX 4)
   ====================== */
   const handleFiles = (i, files) => {
     const copy = [...rows];
-    copy[i].images = Array.from(files).slice(0, 5);
+    copy[i].images = Array.from(files).slice(0, MAX_IMAGES);
     setRows(copy);
   };
 
   /* ======================
-     SUBMIT
+     SUBMIT (FINAL FIX)
   ====================== */
   const submit = async (e) => {
     e.preventDefault();
     setLoading(true);
 
     try {
+      // Product payload (NO images here)
       const payload = rows.map((r) => ({
         name: r.name,
         gender: r.gender,
@@ -103,19 +106,20 @@ export default function AddProduct() {
       const formData = new FormData();
       formData.append("products", JSON.stringify(payload));
 
-      rows.forEach((r, i) =>
-        r.images.forEach((img) =>
-          formData.append(`images_${i}`, img)
-        )
-      );
+      // ✅ IMPORTANT: use SAME field name "images"
+      rows.forEach((r) => {
+        r.images.forEach((img) => {
+          formData.append("images", img);
+        });
+      });
 
       await axios.post(
-        "http://localhost:5000/api/products/bulk", // ✅ YOUR BACKEND
+        "http://localhost:5000/api/products/bulk",
         formData,
         {
           headers: {
             "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${localStorage.getItem("token")}`, // ✅ ADMIN AUTH
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
         }
       );
@@ -124,9 +128,7 @@ export default function AddProduct() {
       setRows([emptyRow()]);
     } catch (err) {
       console.error("❌ Bulk upload error:", err);
-      alert(
-        err.response?.data?.message || "❌ Upload failed"
-      );
+      alert(err.response?.data?.message || "❌ Upload failed");
     } finally {
       setLoading(false);
     }
@@ -222,7 +224,7 @@ export default function AddProduct() {
               </button>
             </div>
 
-            {/* IMAGES */}
+            {/* IMAGE UPLOAD */}
             <input
               type="file"
               multiple
@@ -231,6 +233,19 @@ export default function AddProduct() {
                 handleFiles(i, e.target.files)
               }
             />
+
+            {/* IMAGE PREVIEW */}
+            {row.images.length > 0 && (
+              <div className="image-preview">
+                {row.images.map((img, idx) => (
+                  <img
+                    key={idx}
+                    src={URL.createObjectURL(img)}
+                    alt={`preview-${idx}`}
+                  />
+                ))}
+              </div>
+            )}
 
             <textarea
               placeholder="Description"
