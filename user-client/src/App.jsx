@@ -6,6 +6,7 @@ import {
   useLocation,
 } from "react-router-dom";
 
+/* PAGES */
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import ForgotPassword from "./pages/ForgotPassword";
@@ -17,6 +18,7 @@ import Favorites from "./pages/Favorites";
 import Offers from "./pages/Offers";
 import OrderSuccess from "./pages/Order";
 import Boys from "./pages/BoysProducts";
+import Girls from "./pages/GirlsProducts";
 import Profile from "./pages/Profile";
 import EditProfile from "./pages/EditProfile";
 import Contact from "./pages/Contact";
@@ -26,40 +28,39 @@ import About from "./pages/About";
 import Returns from "./pages/Returns";
 import FAQ from "./pages/FAQ";
 import SearchResults from "./pages/SearchResults";
-import Girls from "./pages/GirlsProducts";
 
+/* COMPONENTS */
 import Header from "./components/Header";
+import Footer from "./components/Footer";
 
-/* 🔐 Private Route */
+/* 🔐 PRIVATE ROUTE */
 const PrivateRoute = ({ children }) => {
-  const token = localStorage.getItem("userToken"); // ✅ FIXED
+  const token = localStorage.getItem("userToken");
   return token ? children : <Navigate to="/" replace />;
 };
 
-/* 🔹 Layout Wrapper */
+/* 🔹 MAIN LAYOUT */
 function Layout() {
   const location = useLocation();
 
-  const hideHeaderRoutes = ["/", "/register", "/forgot"];
-  const shouldHideHeader = hideHeaderRoutes.includes(location.pathname);
+  // pages where header & footer should NOT appear
+  const hideLayoutRoutes = ["/", "/register", "/forgot"];
+
+  const shouldHideLayout = hideLayoutRoutes.includes(location.pathname);
 
   return (
     <>
-      {!shouldHideHeader && <Header />}
+      {/* HEADER */}
+      {!shouldHideLayout && <Header />}
 
+      {/* ROUTES */}
       <Routes>
         {/* PUBLIC ROUTES */}
         <Route path="/" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/forgot" element={<ForgotPassword />} />
-        <Route path="/shipping" element={<Shipping />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/returns" element={<Returns />} />
-        <Route path="/faq" element={<FAQ />} />
-        <Route path="/search" element={<SearchResults />} />
-
-        {/* 🔑 GOOGLE CALLBACK (PUBLIC) */}
         <Route path="/google-success" element={<GoogleSuccess />} />
+        <Route path="/search" element={<SearchResults />} />
 
         {/* PROTECTED ROUTES */}
         <Route
@@ -70,14 +71,25 @@ function Layout() {
             </PrivateRoute>
           }
         />
+
         <Route
           path="/girls"
           element={
-            <PrivateRoute>  {/* ✅ PROTECTED */}
-              < Girls />
+            <PrivateRoute>
+              <Girls />
             </PrivateRoute>
           }
         />
+
+        <Route
+          path="/boys"
+          element={
+            <PrivateRoute>
+              <Boys />
+            </PrivateRoute>
+          }
+        />
+
         <Route
           path="/profile"
           element={
@@ -101,15 +113,6 @@ function Layout() {
           element={
             <PrivateRoute>
               <Contact />
-            </PrivateRoute>
-          }
-        />
-
-        <Route
-          path="/boys"
-          element={
-            <PrivateRoute>
-              <Boys />
             </PrivateRoute>
           }
         />
@@ -168,13 +171,53 @@ function Layout() {
           }
         />
 
+        <Route
+          path="/shipping"
+          element={
+            <PrivateRoute>
+              <Shipping />
+            </PrivateRoute>
+          }
+        />
+
+        <Route
+          path="/about"
+          element={
+            <PrivateRoute>
+              <About />
+            </PrivateRoute>
+          }
+        />
+
+        <Route
+          path="/returns"
+          element={
+            <PrivateRoute>
+              <Returns />
+            </PrivateRoute>
+          }
+        />
+
+        <Route
+          path="/faq"
+          element={
+            <PrivateRoute>
+              <FAQ />
+            </PrivateRoute>
+          }
+        />
+
         {/* FALLBACK */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
+
+      {/* FOOTER */}
+      {!shouldHideLayout && <Footer />}
     </>
   );
 }
 
+/* 🔹 APP ROOT */
 export default function App() {
   return (
     <BrowserRouter>
