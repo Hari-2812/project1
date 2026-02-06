@@ -28,8 +28,6 @@ import About from "./pages/About";
 import Returns from "./pages/Returns";
 import FAQ from "./pages/FAQ";
 import SearchResults from "./pages/SearchResults";
-import ScrollToTop from "./components/ScrollToTop";
-import CookieConsent from "./components/CookieConsent";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import Terms from "./pages/Terms";
 import CookiePolicy from "./pages/CookiePolicy";
@@ -37,6 +35,8 @@ import CookiePolicy from "./pages/CookiePolicy";
 /* COMPONENTS */
 import Header from "./components/Header";
 import Footer from "./components/Footer";
+import ScrollToTop from "./components/ScrollToTop";
+import CookieConsent from "./components/CookieConsent";
 
 /* 🔐 PRIVATE ROUTE */
 const PrivateRoute = ({ children }) => {
@@ -48,10 +48,15 @@ const PrivateRoute = ({ children }) => {
 function Layout() {
   const location = useLocation();
 
-  // pages where header & footer should NOT appear
+  // Routes where header/footer should NOT appear
   const hideLayoutRoutes = ["/", "/register", "/forgot"];
 
-  const shouldHideLayout = hideLayoutRoutes.includes(location.pathname);
+  const shouldHideLayout = hideLayoutRoutes.includes(
+    location.pathname
+  );
+
+  // ✅ Newsletter ONLY on Home page
+  const showNewsletter = location.pathname === "/home";
 
   return (
     <>
@@ -219,8 +224,10 @@ function Layout() {
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
 
-      {/* FOOTER */}
-      {!shouldHideLayout && <Footer />}
+      {/* FOOTER (ONLY ONCE) */}
+      {!shouldHideLayout && (
+        <Footer showNewsletter={showNewsletter} />
+      )}
     </>
   );
 }
