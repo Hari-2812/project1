@@ -165,6 +165,18 @@
   transform: scale(1.05);
 }
 
+.newsletter-success {
+  margin-top: 8px;
+  color: #16a34a;
+  font-size: 14px;
+}
+
+.newsletter-error {
+  margin-top: 8px;
+  color: #dc2626;
+  font-size: 14px;
+}
+
 /* ======================
    PROFILE DROPDOWN
 ====================== */

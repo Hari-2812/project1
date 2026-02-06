@@ -26,6 +26,7 @@ import About from "./pages/About";
 import Returns from "./pages/Returns";
 import FAQ from "./pages/FAQ";
 import SearchResults from "./pages/SearchResults";
+import Girls from "./pages/GirlsProducts";
 
 import Header from "./components/Header";
 
@@ -69,7 +70,14 @@ function Layout() {
             </PrivateRoute>
           }
         />
-
+        <Route
+          path="/girls"
+          element={
+            <PrivateRoute>  {/* ✅ PROTECTED */}
+              < Girls />
+            </PrivateRoute>
+          }
+        />
         <Route
           path="/profile"
           element={
