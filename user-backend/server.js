@@ -24,6 +24,7 @@ import aboutRoutes from "./routes/aboutRoutes.js";
 import returnRouters from "./routes/returnRoutes.js";
 import faqRoutes from "./routes/faqRoutes.js";
 import newsletterRoutes from "./routes/newsletterRoutes.js";
+import cookieConsentRoutes from "./routes/cookieConsentRoutes.js";
 
 
 dotenv.config();
@@ -125,6 +126,7 @@ app.use("/api/shipping", shippingRoutes);
 app.use("/api/about", aboutRoutes);
 app.use("/api/returns", returnRouters);
 app.use("/api/faq", faqRoutes);
+app.use("/api/cookie-consent", cookieConsentRoutes);
 
 app.use("/api/newsletter", newsletterRoutes);
 

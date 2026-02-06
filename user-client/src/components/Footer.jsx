@@ -17,18 +17,21 @@ import "../styles/Footer.css";
 const BACKEND_URL =
   import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
 
-export default function Footer({ showNewsletter = false }) {
+export default function Footer({ showNewsletter = true }) {
   const currentYear = new Date().getFullYear();
 
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
+  const [subscribed, setSubscribed] = useState(false);
 
-  /* 📩 SUBSCRIBE HANDLER */
+  /* =========================
+     📩 NEWSLETTER SUBSCRIBE
+  ========================= */
   const handleSubscribe = async () => {
     if (!email.trim()) {
-      setError("Please enter a valid email");
+      setError("Please enter a valid email address");
       return;
     }
 
@@ -43,6 +46,7 @@ export default function Footer({ showNewsletter = false }) {
       );
 
       setMessage(res.data.message || "Subscribed successfully 🎉");
+      setSubscribed(true);
       setEmail("");
     } catch (err) {
       setError(
@@ -55,12 +59,12 @@ export default function Footer({ showNewsletter = false }) {
 
   return (
     <footer className="footer">
-      {/* 📬 NEWSLETTER SECTION */}
+      {/* ================= NEWSLETTER ================= */}
       {showNewsletter && (
         <div className="newsletter-section">
           <div className="newsletter-content">
-            <h3>Stay Updated!</h3>
-            <p>Subscribe to get special offers and updates</p>
+            <h3>Stay Updated</h3>
+            <p>Get offers, new arrivals & kids fashion updates</p>
 
             <div className="newsletter-form">
               <input
@@ -69,19 +73,22 @@ export default function Footer({ showNewsletter = false }) {
                 className="newsletter-input"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                disabled={loading}
+                disabled={loading || subscribed}
               />
 
               <button
                 className="newsletter-btn"
                 onClick={handleSubscribe}
-                disabled={loading}
+                disabled={loading || subscribed}
               >
-                {loading ? "Subscribing..." : "Subscribe"}
+                {subscribed
+                  ? "Subscribed ✓"
+                  : loading
+                  ? "Subscribing..."
+                  : "Subscribe"}
               </button>
             </div>
 
-            {/* ✅ SUCCESS / ERROR MESSAGE */}
             {message && (
               <p className="newsletter-success">{message}</p>
             )}
@@ -92,30 +99,31 @@ export default function Footer({ showNewsletter = false }) {
         </div>
       )}
 
-      {/* MAIN FOOTER */}
+      {/* ================= MAIN FOOTER ================= */}
       <div className="footer-main">
         <div className="footer-grid">
+
           {/* ABOUT */}
           <div className="footer-column">
             <div className="footer-logo">
               Kids<span>Store</span>
             </div>
             <p className="footer-desc">
-              Your trusted destination for quality kids' clothing.
-              We bring joy to every little adventure.
+              Quality kids wear designed with comfort, care,
+              and happiness in mind.
             </p>
 
             <div className="social-links">
-              <a href="#" className="social-icon">
+              <a href="https://facebook.com" target="_blank" rel="noreferrer">
                 <FaFacebookF />
               </a>
-              <a href="#" className="social-icon">
+              <a href="https://instagram.com" target="_blank" rel="noreferrer">
                 <FaInstagram />
               </a>
-              <a href="#" className="social-icon">
+              <a href="https://twitter.com" target="_blank" rel="noreferrer">
                 <FaTwitter />
               </a>
-              <a href="#" className="social-icon">
+              <a href="https://youtube.com" target="_blank" rel="noreferrer">
                 <FaYoutube />
               </a>
             </div>
@@ -123,67 +131,64 @@ export default function Footer({ showNewsletter = false }) {
 
           {/* QUICK LINKS */}
           <div className="footer-column">
-            <h4>Quick Links</h4>
+            <h4>Shop</h4>
             <ul className="footer-links">
-              <li><Link to="/boys">Boys Collection</Link></li>
-              <li><Link to="/girls">Girls Collection</Link></li>
-              <li><Link to="/favorites">Favorites</Link></li>
-              <li><Link to="/cart">Shopping Cart</Link></li>
-              <li><Link to="/profile">My Account</Link></li>
+              <li><Link to="/boys">Boys</Link></li>
+              <li><Link to="/girls">Girls</Link></li>
+              <li><Link to="/offers">Offers</Link></li>
+              <li><Link to="/favorites">Wishlist</Link></li>
+              <li><Link to="/cart">Cart</Link></li>
             </ul>
           </div>
 
-          {/* CUSTOMER SERVICE */}
+          {/* SUPPORT */}
           <div className="footer-column">
-            <h4>Customer Service</h4>
+            <h4>Support</h4>
             <ul className="footer-links">
               <li><Link to="/about">About Us</Link></li>
-              <li><Link to="/contact">Contact Us</Link></li>
-              <li><Link to="/shipping">Shipping Info</Link></li>
-              <li><Link to="/returns">Returns & Exchanges</Link></li>
+              <li><Link to="/contact">Contact</Link></li>
+              <li><Link to="/shipping">Shipping</Link></li>
+              <li><Link to="/returns">Returns</Link></li>
               <li><Link to="/faq">FAQ</Link></li>
             </ul>
           </div>
 
           {/* CONTACT */}
           <div className="footer-column">
-            <h4>Get in Touch</h4>
+            <h4>Contact</h4>
             <ul className="contact-info">
               <li>
-                <FaMapMarkerAlt className="contact-icon" />
-                <a
-                  href="https://www.google.com/maps?q=123+Kids+Avenue+NY+10001"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  123 Kids Avenue, NY 10001
-                </a>
+                <FaMapMarkerAlt />
+                <span>123 Kids Avenue, NY 10001</span>
               </li>
               <li>
-                <FaPhone className="contact-icon" />
+                <FaPhone />
                 <a href="tel:+919361876698">+91 93618 76698</a>
               </li>
               <li>
-                <FaEnvelope className="contact-icon" />
+                <FaEnvelope />
                 <a href="mailto:support@kidsstore.com">
                   support@kidsstore.com
                 </a>
               </li>
             </ul>
           </div>
+
         </div>
       </div>
 
-      {/* FOOTER BOTTOM */}
+      {/* ================= FOOTER BOTTOM ================= */}
       <div className="footer-bottom">
-        <p>© {currentYear} KidsStore. All rights reserved.</p>
+        <p>
+          © {currentYear} <strong>KidsStore</strong>. All rights reserved.
+        </p>
 
         <div className="footer-bottom-links">
-          <Link to="/privacy">Privacy Policy</Link>
+          <Link to="/privacy-policy">Privacy Policy</Link>
           <span>•</span>
           <Link to="/terms">Terms of Service</Link>
           <span>•</span>
-          <Link to="/cookies">Cookie Policy</Link>
+          <Link to="/cookie-policy">Cookie Policy</Link>
         </div>
 
         <p className="made-with">

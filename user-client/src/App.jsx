@@ -29,6 +29,10 @@ import Returns from "./pages/Returns";
 import FAQ from "./pages/FAQ";
 import SearchResults from "./pages/SearchResults";
 import ScrollToTop from "./components/ScrollToTop";
+import CookieConsent from "./components/CookieConsent";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import Terms from "./pages/Terms";
+import CookiePolicy from "./pages/CookiePolicy";
 
 /* COMPONENTS */
 import Header from "./components/Header";
@@ -62,6 +66,9 @@ function Layout() {
         <Route path="/forgot" element={<ForgotPassword />} />
         <Route path="/google-success" element={<GoogleSuccess />} />
         <Route path="/search" element={<SearchResults />} />
+        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+        <Route path="/terms" element={<Terms />} />
+        <Route path="/cookie-policy" element={<CookiePolicy />} />
 
         {/* PROTECTED ROUTES */}
         <Route
@@ -224,6 +231,7 @@ export default function App() {
     <BrowserRouter>
       <ScrollToTop />
       <Layout />
+      <CookieConsent />
     </BrowserRouter>
   );
 }

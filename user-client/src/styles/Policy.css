@@ -1,0 +1,18 @@
+.policy-page {
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 0 20px;
+}
+
+.policy-page h1 {
+  margin-bottom: 20px;
+}
+
+.policy-page h2 {
+  margin-top: 25px;
+}
+
+.policy-page p,
+.policy-page li {
+  line-height: 1.7;
+}
