@@ -28,6 +28,7 @@ import About from "./pages/About";
 import Returns from "./pages/Returns";
 import FAQ from "./pages/FAQ";
 import SearchResults from "./pages/SearchResults";
+import ScrollToTop from "./components/ScrollToTop";
 
 /* COMPONENTS */
 import Header from "./components/Header";
@@ -221,6 +222,7 @@ function Layout() {
 export default function App() {
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <Layout />
     </BrowserRouter>
   );
