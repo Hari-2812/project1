@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import {
   FaShoppingCart,
@@ -39,11 +39,25 @@ export default function Header() {
   }, [favorites]);
 
   /* ======================
+     CLOSE MENU ON OUTSIDE CLICK
+  ====================== */
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (!e.target.closest(".profile-wrapper")) {
+        setShowMenu(false);
+      }
+    };
+
+    document.addEventListener("click", handleClickOutside);
+    return () =>
+      document.removeEventListener("click", handleClickOutside);
+  }, []);
+
+  /* ======================
      LOGOUT (GOOGLE SAFE)
   ====================== */
   const logout = async () => {
     try {
-      // 🔑 clear google/passport session
       await fetch("http://localhost:5000/api/auth/logout", {
         method: "GET",
         credentials: "include",
@@ -52,14 +66,12 @@ export default function Header() {
       console.log("Logout request failed (safe to ignore)");
     }
 
-    // 🔥 clear local auth data
     localStorage.removeItem("userToken");
     localStorage.removeItem("user");
     localStorage.removeItem("adminToken");
 
     setShowMenu(false);
 
-    // 🔄 hard reload to reset state
     window.location.href = "/";
   };
 
@@ -93,20 +105,23 @@ export default function Header() {
 
         {/* PROFILE */}
         {userToken ? (
-          <div
-            className="profile-wrapper"
-            onMouseLeave={() => setShowMenu(false)}
-          >
+          <div className="profile-wrapper">
             <button
               className="profile-avatar"
-              onClick={() => setShowMenu(!showMenu)}
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowMenu((prev) => !prev);
+              }}
               title="Profile"
             >
               <FaUser />
             </button>
 
             {showMenu && (
-              <div className="profile-dropdown">
+              <div
+                className="profile-dropdown"
+                onClick={(e) => e.stopPropagation()}
+              >
                 <Link
                   to="/profile"
                   onClick={() => setShowMenu(false)}
