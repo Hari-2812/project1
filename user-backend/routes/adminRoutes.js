@@ -2,6 +2,7 @@ import express from "express";
 import { authMiddleware } from "../middleware/authMiddleware.js";
 import { adminMiddleware } from "../middleware/adminMiddleware.js";
 import upload from "../middleware/upload.js";
+import User from "../models/User.js";
 
 import Order from "../models/Order.js";
 import Product from "../models/Product.js";
@@ -96,6 +97,35 @@ router.post(
   adminMiddleware,
   upload.any(),
   bulkAddProducts
+);
+
+
+/* =========================
+   GET ALL USERS (ADMIN)
+========================= */
+router.get(
+  "/users",
+  authMiddleware,
+  adminMiddleware,
+  async (req, res) => {
+    try {
+      const users = await User.find()
+        .select("-password")
+        .sort({ createdAt: -1 });
+
+      res.status(200).json({
+        success: true,
+        total: users.length,
+        users,
+      });
+    } catch (error) {
+      console.error("❌ Fetch users error:", error);
+      res.status(500).json({
+        success: false,
+        message: "Failed to fetch users",
+      });
+    }
+  }
 );
 
 export default router;

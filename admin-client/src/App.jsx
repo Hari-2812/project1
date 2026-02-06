@@ -8,6 +8,7 @@ import AdminOrders from "./pages/AdminOrders";
 import AdminTrackOrder from "./pages/AdminTrackOrder";
 import AdminOffers from "./pages/AdminOffers";
 import AddOffer from "./pages/AddOffer";
+import AdminUsers from "./pages/AdminUsers";
 
 /* ================= ROUTE GUARD ================= */
 import PrivateRoute from "./routes/PrivateRoute";
@@ -87,6 +88,15 @@ const App = () => {
             </PrivateRoute>
           }
         />
+        <Route
+          path="/admin-users"
+          element={
+            <PrivateRoute>
+              <AdminUsers />
+            </PrivateRoute>
+          }
+        />
+
 
         {/* =====================
             FALLBACK ROUTE
