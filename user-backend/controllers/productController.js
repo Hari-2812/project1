@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import Product from "../models/Product.js";
 
 /* =========================
@@ -14,32 +15,64 @@ export const bulkAddProducts = async (req, res) => {
       });
     }
 
-    const saved = [];
-
-    products.forEach((p, index) => {
-      const files =
-        req.files?.filter(
-          (file) => file.fieldname === `images_${index}`
-        ) || [];
-
-      saved.push({
-        ...p,
-        images: files.map((f) => `/uploads/${f.filename}`),
+    if (!req.files || req.files.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: "No images provided",
       });
+    }
+
+    let fileIndex = 0;
+
+    const preparedProducts = products.map((p, index) => {
+      const imageCount = Number(p.imageCount) || 0;
+
+      if (fileIndex + imageCount > req.files.length) {
+        throw new Error(`Insufficient images for product ${index + 1}`);
+      }
+
+      const images = req.files
+        .slice(fileIndex, fileIndex + imageCount)
+        .map((file) => `/uploads/${file.filename}`);
+
+      fileIndex += imageCount;
+
+      return {
+        name: p.name?.trim(),
+        gender: p.gender?.toLowerCase(),
+        category: p.category?.toLowerCase()?.trim(),
+        price: Number(p.price),
+        discountPrice: p.discountPrice ?? null,
+        sizes: p.sizes || [],
+        description: p.description || "",
+        productCode: p.productCode || "",
+        isFeatured: Boolean(p.isFeatured),
+        images,
+      };
     });
 
-    await Product.insertMany(saved);
+    if (fileIndex !== req.files.length) {
+      return res.status(400).json({
+        success: false,
+        message: "Image count mismatch",
+      });
+    }
+
+    const inserted = await Product.insertMany(preparedProducts, {
+      ordered: false,
+    });
 
     res.status(201).json({
       success: true,
       message: "Products added successfully",
-      count: saved.length,
+      count: inserted.length,
+      products: inserted.map((p) => p._id),
     });
   } catch (err) {
     console.error("BULK ADD ERROR:", err);
-    res.status(500).json({
+    res.status(400).json({
       success: false,
-      message: "Bulk upload failed",
+      message: err.message || "Bulk upload failed",
     });
   }
 };
@@ -53,7 +86,10 @@ export const getProducts = async (req, res) => {
 
     res.status(200).json({
       success: true,
-      products,
+      products: products.map((p) => ({
+        ...p.toObject(),
+        images: Array.isArray(p.images) ? p.images.filter(Boolean) : [],
+      })),
     });
   } catch (err) {
     console.error("GET PRODUCTS ERROR:", err);
@@ -69,11 +105,27 @@ export const getProducts = async (req, res) => {
 ========================= */
 export const deleteProduct = async (req, res) => {
   try {
-    await Product.findByIdAndDelete(req.params.id);
+    const { id } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid product ID",
+      });
+    }
+
+    const deletedProduct = await Product.findByIdAndDelete(id);
+
+    if (!deletedProduct) {
+      return res.status(404).json({
+        success: false,
+        message: "Product not found",
+      });
+    }
 
     res.status(200).json({
       success: true,
-      message: "Product deleted",
+      message: "Product deleted successfully",
     });
   } catch (err) {
     console.error("DELETE PRODUCT ERROR:", err);

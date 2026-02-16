@@ -2,9 +2,6 @@ import mongoose from "mongoose";
 
 const userSchema = new mongoose.Schema(
   {
-    /* =========================
-       BASIC INFO
-    ========================= */
     name: {
       type: String,
       required: true,
@@ -30,23 +27,16 @@ const userSchema = new mongoose.Schema(
       default: "user",
     },
 
-    /* =========================
-       PROFILE INFO
-    ========================= */
     phone: {
       type: String,
-      trim: true,
       default: "",
     },
 
     avatar: {
-      type: String, // image URL
+      type: String,
       default: "",
     },
 
-    /* =========================
-       ADDRESS
-    ========================= */
     address: {
       street: { type: String, default: "" },
       city: { type: String, default: "" },
@@ -54,17 +44,12 @@ const userSchema = new mongoose.Schema(
       pincode: { type: String, default: "" },
     },
 
-    /* =========================
-       STATUS
-    ========================= */
     isActive: {
       type: Boolean,
       default: true,
     },
   },
-  {
-    timestamps: true,
-  }
+  { timestamps: true }
 );
 
 export default mongoose.model("User", userSchema);

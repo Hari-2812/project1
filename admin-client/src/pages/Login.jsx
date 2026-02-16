@@ -1,24 +1,31 @@
-import { useState } from "react"
-import API from "../services/api"
-import { useNavigate } from "react-router-dom"
-import "../styles/Login.css"
+import { useState } from "react";
+import API from "../services/api";
+import { useNavigate } from "react-router-dom";
+import "../styles/Login.css";
 
 const Login = () => {
-  const navigate = useNavigate()
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
-  const [error, setError] = useState("")
+  const navigate = useNavigate();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
   const handleLogin = async () => {
     try {
-      setError("")
-      const res = await API.post("/auth/admin/login", { email, password })
-      localStorage.setItem("adminToken", res.data.token)
-      navigate("/dashboard")
+      setError("");
+
+      const res = await API.post("/auth/admin/login", {
+        email,
+        password,
+      });
+
+      // ✅ Store correct token
+      localStorage.setItem("adminToken", res.data.token);
+
+      navigate("/dashboard");
     } catch (err) {
-      setError(err.response?.data?.message || "Login failed")
+      setError(err.response?.data?.message || "Login failed");
     }
-  }
+  };
 
   return (
     <div className="login-container">
@@ -43,7 +50,7 @@ const Login = () => {
         {error && <p className="login-error">{error}</p>}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Login
+export default Login;

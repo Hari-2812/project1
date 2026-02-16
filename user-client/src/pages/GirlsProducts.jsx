@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import CategoryTabs from "../components/CategoryTabs";
 import ProductCard from "../components/ProductCard";
 import socket from "../services/socket";
-import "../styles/BoysProducts.css";
+import "../styles/GirlsProducts.css";
 
 const categories = [
   "All",
@@ -13,10 +13,10 @@ const categories = [
   "Jackets",
 ];
 
-export default function BoysProducts() {
+export default function GirlsProducts() {
   const [activeCategory, setActiveCategory] = useState("All");
   const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true); // ✅ 1. Added loading state
+  const [loading, setLoading] = useState(true);
 
   /* =========================
       INITIAL FETCH
@@ -24,7 +24,6 @@ export default function BoysProducts() {
   useEffect(() => {
     fetchProducts();
 
-    // Listen for real-time updates
     socket.on("product-added", (product) => {
       setProducts((prev) => [product, ...prev]);
     });
@@ -34,7 +33,7 @@ export default function BoysProducts() {
 
   const fetchProducts = async () => {
     try {
-      setLoading(true); // Start loading
+      setLoading(true);
       const res = await fetch("http://localhost:5000/api/products");
       const data = await res.json();
 
@@ -43,25 +42,32 @@ export default function BoysProducts() {
       console.error("Failed to fetch products", err);
       setProducts([]);
     } finally {
-      setLoading(false); // ✅ 2. Stop loading (always runs)
+      setLoading(false);
     }
   };
 
   /* =========================
       FILTER LOGIC (FIXED)
   ========================= */
-  // First, isolate ONLY boys products from the raw list
-  const boysOnly = products.filter((p) => p.gender === "Boys");
 
-  // Then filter by the selected category tab
+  // ✅ Filter only girls products (case safe)
+  const girlsOnly = products.filter(
+    (p) => p.gender?.toLowerCase() === "girls"
+  );
+
+  // ✅ Category filter (case safe)
   const filteredProducts =
     activeCategory === "All"
-      ? boysOnly
-      : boysOnly.filter((p) => p.category === activeCategory);
+      ? girlsOnly
+      : girlsOnly.filter(
+          (p) =>
+            p.category?.toLowerCase() ===
+            activeCategory.toLowerCase()
+        );
 
   return (
-    <div className="boys-page">
-      <h1 className="boys-title">Boys Collection</h1>
+    <div className="girls-page">
+      <h1 className="girls-title">Girls Collection</h1>
 
       <CategoryTabs
         categories={categories}
@@ -69,14 +75,26 @@ export default function BoysProducts() {
         setActive={setActiveCategory}
       />
 
-      <div className="boys-grid">
-        {/* ✅ 3. Loading Check to prevent flicker */}
+      <div className="girls-grid">
         {loading ? (
-          <div style={{ color: "white", width: "100%", textAlign: "center", marginTop: "50px" }}>
+          <div
+            style={{
+              color: "white",
+              width: "100%",
+              textAlign: "center",
+              marginTop: "50px",
+            }}
+          >
             <h2>Loading collection...</h2>
           </div>
         ) : filteredProducts.length === 0 ? (
-          <p style={{ textAlign: "center", width: "100%", color: "rgba(255,255,255,0.7)" }}>
+          <p
+            style={{
+              textAlign: "center",
+              width: "100%",
+              color: "rgba(255,255,255,0.7)",
+            }}
+          >
             No products found for {activeCategory}
           </p>
         ) : (

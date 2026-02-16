@@ -32,9 +32,15 @@ export default function NewArrivals() {
     fetchProducts();
   }, []);
 
+  /* ======================
+     SAFE FILTER
+  ====================== */
   const filtered = products.filter(
-    (p) => p.category === active
-  );
+  (p) =>
+    p.category &&
+    p.category.toLowerCase().trim() === active
+);
+
 
   if (loading) {
     return <p style={{ textAlign: "center" }}>Loading products...</p>;

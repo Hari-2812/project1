@@ -1,8 +1,10 @@
 import express from "express";
+import mongoose from "mongoose";
 import Product from "../models/Product.js";
 import upload from "../middleware/upload.js";
 import { authMiddleware } from "../middleware/authMiddleware.js";
 import { adminMiddleware } from "../middleware/adminMiddleware.js";
+import { bulkAddProducts } from "../controllers/productController.js";
 
 const router = express.Router();
 
@@ -15,10 +17,16 @@ router.get("/", async (req, res) => {
       .sort({ createdAt: -1 })
       .lean();
 
+    // ✅ Safety: remove null images (old data)
+    const safeProducts = products.map((p) => ({
+      ...p,
+      images: Array.isArray(p.images) ? p.images.filter(Boolean) : [],
+    }));
+
     res.status(200).json({
       success: true,
-      count: products.length,
-      products,
+      count: safeProducts.length,
+      products: safeProducts,
     });
   } catch (error) {
     console.error("GET PRODUCTS ERROR:", error);
@@ -30,11 +38,21 @@ router.get("/", async (req, res) => {
 });
 
 /* =====================================================
-   2️⃣ GET PRODUCT BY ID (PUBLIC)
+   2️⃣ GET PRODUCT BY ID (PUBLIC) ✅ FIXED
 ===================================================== */
 router.get("/:id", async (req, res) => {
   try {
-    const product = await Product.findById(req.params.id);
+    const { id } = req.params;
+
+    // 🔥 Prevent ObjectId crash
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid product ID",
+      });
+    }
+
+    const product = await Product.findById(id).lean();
 
     if (!product) {
       return res.status(404).json({
@@ -42,6 +60,11 @@ router.get("/:id", async (req, res) => {
         message: "Product not found",
       });
     }
+
+    // ✅ Remove null images
+    product.images = Array.isArray(product.images)
+      ? product.images.filter(Boolean)
+      : [];
 
     res.status(200).json({
       success: true,
@@ -57,7 +80,7 @@ router.get("/:id", async (req, res) => {
 });
 
 /* =====================================================
-   3️⃣ ADD PRODUCT (ADMIN ONLY)
+   3️⃣ ADD PRODUCT (ADMIN ONLY – SINGLE) ✅ FIXED
 ===================================================== */
 router.post(
   "/",
@@ -85,11 +108,12 @@ router.post(
         });
       }
 
-      /* Handle images */
+      // ✅ SAFE image handling
       const images =
-        req.files?.map((file) => `/uploads/${file.filename}`) || [];
+        (req.files || [])
+          .map((file) => `/uploads/${file.filename}`)
+          .filter(Boolean);
 
-      /* Parse sizes safely */
       let parsedSizes = [];
       if (sizes) {
         try {
@@ -134,7 +158,18 @@ router.post(
 );
 
 /* =====================================================
-   4️⃣ UPDATE PRODUCT (ADMIN ONLY)
+   4️⃣ BULK ADD PRODUCTS (ADMIN ONLY) ✅ CORRECT
+===================================================== */
+router.post(
+  "/bulk",
+  authMiddleware,
+  adminMiddleware,
+  upload.array("images", 100),
+  bulkAddProducts
+);
+
+/* =====================================================
+   5️⃣ UPDATE PRODUCT (ADMIN ONLY) ✅ FIXED
 ===================================================== */
 router.put(
   "/:id",
@@ -143,7 +178,16 @@ router.put(
   upload.any(),
   async (req, res) => {
     try {
-      const product = await Product.findById(req.params.id);
+      const { id } = req.params;
+
+      if (!mongoose.Types.ObjectId.isValid(id)) {
+        return res.status(400).json({
+          success: false,
+          message: "Invalid product ID",
+        });
+      }
+
+      const product = await Product.findById(id);
 
       if (!product) {
         return res.status(404).json({
@@ -152,7 +196,6 @@ router.put(
         });
       }
 
-      /* Update allowed fields */
       const fields = [
         "name",
         "gender",
@@ -173,7 +216,6 @@ router.put(
         product.isFeatured = req.body.isFeatured === "true";
       }
 
-      /* Update sizes */
       if (req.body.sizes) {
         try {
           const parsed = JSON.parse(req.body.sizes);
@@ -188,11 +230,12 @@ router.put(
         }
       }
 
-      /* Append new images */
+      // ✅ SAFE image append
       if (req.files && req.files.length > 0) {
-        const newImages = req.files.map(
-          (file) => `/uploads/${file.filename}`
-        );
+        const newImages = req.files
+          .map((file) => `/uploads/${file.filename}`)
+          .filter(Boolean);
+
         product.images.push(...newImages);
       }
 
@@ -214,7 +257,7 @@ router.put(
 );
 
 /* =====================================================
-   5️⃣ DELETE PRODUCT (ADMIN ONLY)
+   6️⃣ DELETE PRODUCT (ADMIN ONLY)
 ===================================================== */
 router.delete(
   "/:id",
@@ -222,15 +265,6 @@ router.delete(
   adminMiddleware,
   async (req, res) => {
     try {
-      const product = await Product.findById(req.params.id);
-
-      if (!product) {
-        return res.status(404).json({
-          success: false,
-          message: "Product not found",
-        });
-      }
-
       await Product.findByIdAndDelete(req.params.id);
 
       res.status(200).json({

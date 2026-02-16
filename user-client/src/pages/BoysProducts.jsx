@@ -16,7 +16,7 @@ const categories = [
 export default function BoysProducts() {
   const [activeCategory, setActiveCategory] = useState("All");
   const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true); // ✅ 1. Added loading state
+  const [loading, setLoading] = useState(true);
 
   /* =========================
       INITIAL FETCH
@@ -34,7 +34,8 @@ export default function BoysProducts() {
 
   const fetchProducts = async () => {
     try {
-      setLoading(true); // Start loading
+      setLoading(true);
+
       const res = await fetch("http://localhost:5000/api/products");
       const data = await res.json();
 
@@ -43,21 +44,28 @@ export default function BoysProducts() {
       console.error("Failed to fetch products", err);
       setProducts([]);
     } finally {
-      setLoading(false); // ✅ 2. Stop loading (always runs)
+      setLoading(false);
     }
   };
 
   /* =========================
       FILTER LOGIC (FIXED)
   ========================= */
-  // First, isolate ONLY boys products from the raw list
-  const boysOnly = products.filter((p) => p.gender === "Boys");
 
-  // Then filter by the selected category tab
+  // ✅ Normalize gender comparison
+  const boysOnly = products.filter(
+    (p) => p.gender?.toLowerCase() === "boys"
+  );
+
+  // ✅ Normalize category comparison
   const filteredProducts =
     activeCategory === "All"
       ? boysOnly
-      : boysOnly.filter((p) => p.category === activeCategory);
+      : boysOnly.filter(
+          (p) =>
+            p.category?.toLowerCase() ===
+            activeCategory.toLowerCase()
+        );
 
   return (
     <div className="boys-page">
@@ -70,13 +78,25 @@ export default function BoysProducts() {
       />
 
       <div className="boys-grid">
-        {/* ✅ 3. Loading Check to prevent flicker */}
         {loading ? (
-          <div style={{ color: "white", width: "100%", textAlign: "center", marginTop: "50px" }}>
+          <div
+            style={{
+              color: "white",
+              width: "100%",
+              textAlign: "center",
+              marginTop: "50px",
+            }}
+          >
             <h2>Loading collection...</h2>
           </div>
         ) : filteredProducts.length === 0 ? (
-          <p style={{ textAlign: "center", width: "100%", color: "rgba(255,255,255,0.7)" }}>
+          <p
+            style={{
+              textAlign: "center",
+              width: "100%",
+              color: "rgba(255,255,255,0.7)",
+            }}
+          >
             No products found for {activeCategory}
           </p>
         ) : (

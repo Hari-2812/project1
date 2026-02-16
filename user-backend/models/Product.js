@@ -24,12 +24,13 @@ const productSchema = new mongoose.Schema(
 
     gender: {
       type: String,
-      enum: ["Boys", "Girls"],
+      enum: ["boys", "girls"],   // 🔑 lowercase
       required: true,
     },
 
     category: {
       type: String,
+      enum: ["boys", "girls", "toddlers"], // 🔑 enforce valid categories
       required: true,
     },
 
@@ -61,13 +62,12 @@ const productSchema = new mongoose.Schema(
     },
 
     images: {
-      type: [String], // stored as "/uploads/filename.jpg"
+      type: [String],
       default: [],
     },
   },
   { timestamps: true }
 );
 
-/* ✅ THIS IS THE FIX */
 const Product = mongoose.model("Product", productSchema);
 export default Product;

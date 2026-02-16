@@ -1,48 +1,60 @@
-import { useState } from "react";
-import { FaChevronLeft, FaChevronRight, FaStar, FaShoppingCart } from "react-icons/fa";
+import { useEffect, useState } from "react";
+import {
+  FaChevronLeft,
+  FaChevronRight,
+  FaStar,
+  FaShoppingCart,
+} from "react-icons/fa";
 import "../styles/productDetail.css";
 
-const products = [
-  {
-    id: 1,
-    name: "Kids Hoodie",
-    price: 1299,
-    rating: 4,
-    image: "https://images.unsplash.com/photo-1600180758890-6b94519a8ba6?auto=format&fit=crop&w=400&q=80"
-  },
-  {
-    id: 2,
-    name: "Printed Shorts",
-    price: 699,
-    rating: 5,
-    image: "https://images.unsplash.com/photo-1585386959984-a4155224a1a4?auto=format&fit=crop&w=400&q=80"
-  },
-  {
-    id: 3,
-    name: "Kids Jacket",
-    price: 1599,
-    rating: 4,
-    image: "https://images.unsplash.com/photo-1519238263530-99bdd11df2ea?auto=format&fit=crop&w=400&q=80"
-  },
-  {
-    id: 4,
-    name: "Cotton Pyjamas",
-    price: 799,
-    rating: 5,
-    image: "https://images.unsplash.com/photo-1618354691438-25e1f06b5f6b?auto=format&fit=crop&w=400&q=80"
-  }
-];
+const API_BASE =
+  import.meta.env.VITE_API_URL || "http://localhost:5000";
 
-export default function RelatedProducts() {
+export default function RelatedProducts({ currentProduct }) {
+  const [products, setProducts] = useState([]);
   const [start, setStart] = useState(0);
 
-  const visible = products.slice(start, start + 3);
+  /* ======================
+     FETCH PRODUCTS
+  ====================== */
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const res = await fetch(`${API_BASE}/api/products`);
+        const data = await res.json();
+
+        if (data.success) {
+          setProducts(data.products);
+        }
+      } catch (err) {
+        console.error("RELATED PRODUCTS ERROR:", err);
+      }
+    };
+
+    fetchProducts();
+  }, []);
+
+  /* ======================
+     FILTER RELATED
+  ====================== */
+  const related = products.filter(
+    (p) =>
+      p._id !== currentProduct._id &&
+      p.category &&
+      currentProduct.category &&
+      p.category.toLowerCase().trim() ===
+        currentProduct.category.toLowerCase().trim()
+  );
+
+  const visible = related.slice(start, start + 3);
 
   const prev = () =>
-    setStart(start === 0 ? products.length - 3 : start - 1);
+    setStart(start === 0 ? Math.max(related.length - 3, 0) : start - 1);
 
   const next = () =>
-    setStart(start + 3 >= products.length ? 0 : start + 1);
+    setStart(start + 3 >= related.length ? 0 : start + 1);
+
+  if (related.length === 0) return null;
 
   return (
     <div className="pd-related">
@@ -55,29 +67,21 @@ export default function RelatedProducts() {
 
         <div className="pd-related-grid">
           {visible.map((p) => (
-            <div key={p.id} className="pd-related-card">
-              <img src={p.image} alt={p.name} />
+            <div key={p._id} className="pd-related-card">
+              <img src={p.images?.[0]} alt={p.name} />
 
               <h4>{p.name}</h4>
               <p className="price">₹{p.price}</p>
 
               <div className="rating">
-                {Array.from({ length: p.rating }).map((_, i) => (
+                {Array.from({ length: p.rating || 4 }).map((_, i) => (
                   <FaStar key={i} />
                 ))}
               </div>
 
-              <button
-                className="pd-related-cart"
-                onClick={() => {
-                  addToCart(product);
-                  setShowToast(true);
-                  setTimeout(() => setShowToast(false), 2000);
-                }}
-              >
-                Add to Cart
+              <button className="pd-related-cart">
+                <FaShoppingCart /> Add to Cart
               </button>
-
             </div>
           ))}
         </div>

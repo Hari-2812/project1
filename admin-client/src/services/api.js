@@ -10,10 +10,12 @@ const API = axios.create({
 ========================== */
 API.interceptors.request.use(
   (req) => {
-    const token = localStorage.getItem("adminToken");
+    const token = localStorage.getItem("token"); // ✅ FIXED
+
     if (token) {
       req.headers.Authorization = `Bearer ${token}`;
     }
+
     return req;
   },
   (error) => Promise.reject(error)
@@ -25,12 +27,8 @@ API.interceptors.request.use(
 API.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (
-      error.response &&
-      error.response.status === 401 &&
-      error.response.data?.message?.toLowerCase().includes("expired")
-    ) {
-      localStorage.removeItem("adminToken");
+    if (error.response?.status === 401) {
+      localStorage.removeItem("token");
       window.location.href = "/";
     }
     return Promise.reject(error);

@@ -3,9 +3,6 @@ import User from "../models/User.js";
 
 export const authMiddleware = async (req, res, next) => {
   try {
-    /* =========================
-       1️⃣ Check Authorization Header
-    ========================= */
     const authHeader = req.headers.authorization;
 
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
@@ -15,20 +12,25 @@ export const authMiddleware = async (req, res, next) => {
       });
     }
 
-    /* =========================
-       2️⃣ Extract Token
-    ========================= */
     const token = authHeader.split(" ")[1];
+    if (!token) {
+      return res.status(401).json({
+        success: false,
+        message: "Invalid token format",
+      });
+    }
 
-    /* =========================
-       3️⃣ Verify Token
-    ========================= */
+    // 🔥 FIXED: Remove maxAge option - use token's own exp
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-    /* =========================
-       4️⃣ Fetch User
-    ========================= */
-    const user = await User.findById(decoded.id).select("-password");
+    if (!decoded.id) {
+      return res.status(401).json({
+        success: false,
+        message: "Invalid token payload",
+      });
+    }
+
+    const user = await User.findById(decoded.id).select("-password -__v");
 
     if (!user) {
       return res.status(401).json({
@@ -37,35 +39,51 @@ export const authMiddleware = async (req, res, next) => {
       });
     }
 
-    /* =========================
-       5️⃣ Attach User to Request
-    ========================= */
-    req.user = user;
+    if (!user.isActive) {
+      return res.status(401).json({
+        success: false,
+        message: "Account is disabled",
+      });
+    }
+
+    req.user = {
+      id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role || "user",
+    };
 
     next();
   } catch (error) {
-    console.error("AUTH MIDDLEWARE ERROR:", error.message);
+    console.error("AUTH MIDDLEWARE ERROR:", error.name, error.message);
 
-    /* =========================
-       Token Specific Errors
-    ========================= */
-    if (error.name === "TokenExpiredError") {
-      return res.status(401).json({
-        success: false,
-        message: "Session expired. Please login again.",
-      });
+    switch (error.name) {
+      case "TokenExpiredError":
+        return res.status(401).json({
+          success: false,
+          message: "Session expired. Please login again.",
+          expired: true,
+        });
+      case "JsonWebTokenError":
+        return res.status(401).json({
+          success: false,
+          message: "Invalid authentication token",
+        });
+      default:
+        return res.status(401).json({
+          success: false,
+          message: "Authentication failed",
+        });
     }
+  }
+};
 
-    if (error.name === "JsonWebTokenError") {
-      return res.status(401).json({
-        success: false,
-        message: "Invalid authentication token",
-      });
-    }
-
-    return res.status(401).json({
+export const adminMiddleware = (req, res, next) => {
+  if (req.user?.role !== "admin") {
+    return res.status(403).json({
       success: false,
-      message: "Authentication failed",
+      message: "Admin access required",
     });
   }
+  next();
 };
