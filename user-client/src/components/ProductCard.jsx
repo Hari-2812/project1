@@ -3,10 +3,13 @@ import {
   FaRegHeart,
   FaStar,
   FaShoppingCart,
+  FaChevronLeft,
+  FaChevronRight,
 } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { useFavorite } from "../context/FavoriteContext";
 import { useCart } from "../context/CartContext";
+import { useState } from "react";
 import "../styles/ProductCard.css";
 
 const BACKEND_URL =
@@ -17,47 +20,78 @@ export default function ProductCard({ product }) {
   const { toggleFavorite, isFavorite } = useFavorite();
   const { addToCart } = useCart();
 
+  const [activeImg, setActiveImg] = useState(0);
+
   if (!product) return null;
 
-  /* 🖼️ SAFE IMAGE HANDLING */
-  const image =
-    Array.isArray(product?.images) &&
-    typeof product.images[0] === "string"
-      ? product.images[0]
-      : null;
+  /* ================= IMAGE HANDLING ================= */
 
-  const imageSrc = image
-    ? image.startsWith("http")
-      ? image
-      : `${BACKEND_URL}${image}`
-    : "/placeholder.png";
+  const images =
+    Array.isArray(product.images) && product.images.length > 0
+      ? product.images.map((img) =>
+          img.startsWith("http")
+            ? img
+            : `${BACKEND_URL}${img}`
+        )
+      : ["/placeholder.png"];
 
   const fav = isFavorite(product._id);
 
-  // ✅ PREVENT INFINITE LOOP
-  const handleImageError = (e) => {
-    // If the image that failed IS ALREADY the placeholder, stop.
-    if (e.target.src.includes("placeholder.png")) {
-      e.target.style.display = "none"; // Hide broken image icon
-    } else {
-      e.target.src = "/placeholder.png"; // Try loading placeholder
-    }
+  const nextImage = (e) => {
+    e.stopPropagation();
+    setActiveImg((prev) => (prev + 1) % images.length);
   };
+
+  const prevImage = (e) => {
+    e.stopPropagation();
+    setActiveImg((prev) =>
+      prev === 0 ? images.length - 1 : prev - 1
+    );
+  };
+
+  /* ================= UI ================= */
 
   return (
     <div
       className="product-card"
       onClick={() => navigate(`/product/${product._id}`)}
     >
-      {/* ✅ WRAPPER KEEPS HEIGHT STABLE */}
+      {/* IMAGE WRAPPER */}
       <div className="card-image-wrapper">
         <img
-          src={imageSrc}
+          src={images[activeImg]}
           alt={product?.name || "Product"}
-          onError={handleImageError}
         />
+
+        {/* Slider Arrows */}
+        {images.length > 1 && (
+          <>
+            <button className="img-arrow left" onClick={prevImage}>
+              <FaChevronLeft />
+            </button>
+            <button className="img-arrow right" onClick={nextImage}>
+              <FaChevronRight />
+            </button>
+          </>
+        )}
+
+        {/* Wishlist Floating */}
+        <button
+          className="wishlist-btn"
+          onClick={(e) => {
+            e.stopPropagation();
+            toggleFavorite(product);
+          }}
+        >
+          {fav ? (
+            <FaHeart className="active-heart" />
+          ) : (
+            <FaRegHeart />
+          )}
+        </button>
       </div>
 
+      {/* PRODUCT INFO */}
       <div className="product-info">
         <h3>{product.name}</h3>
 
@@ -68,31 +102,25 @@ export default function ProductCard({ product }) {
         <p className="price">₹{product.price}</p>
 
         <div className="card-actions">
-          {/* ... buttons ... */}
-          <button className="buy-now" onClick={(e) => {
-             e.stopPropagation();
-             addToCart({...product, image: imageSrc});
-             navigate("/checkout");
-          }}>
+          <button
+            className="buy-now"
+            onClick={(e) => {
+              e.stopPropagation();
+              addToCart({ ...product, image: images[0] });
+              navigate("/checkout");
+            }}
+          >
             Buy Now
           </button>
 
-          <button className="add-cart" onClick={(e) => {
-             e.stopPropagation();
-             addToCart({...product, image: imageSrc});
-          }}>
+          <button
+            className="add-cart"
+            onClick={(e) => {
+              e.stopPropagation();
+              addToCart({ ...product, image: images[0] });
+            }}
+          >
             <FaShoppingCart /> Add
-          </button>
-
-          <button className="fav-btn" onClick={(e) => {
-             e.stopPropagation();
-             toggleFavorite(product);
-          }}>
-            {fav ? (
-              <FaHeart style={{ color: "#ff5e7e" }} />
-            ) : (
-              <FaRegHeart />
-            )}
           </button>
         </div>
       </div>
