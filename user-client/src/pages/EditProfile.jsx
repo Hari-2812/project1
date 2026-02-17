@@ -23,33 +23,44 @@ const EditProfile = () => {
   ====================== */
   useEffect(() => {
     const fetchProfile = async () => {
-      const token = localStorage.getItem("userToken");
-      if (!token) {
-        navigate("/login");
-        return;
-      }
+      try {
+        const token = localStorage.getItem("userToken");
 
-      const res = await axios.get(
-        `${API_BASE}/api/user/profile`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+        if (!token) {
+          navigate("/login");
+          return;
         }
-      );
 
-      const u = res.data.user;
+        // ✅ FIXED HERE (users not user)
+        const res = await axios.get(
+          `${API_BASE}/api/users/profile`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
 
-      setForm({
-        name: u.name || "",
-        phone: u.phone || "",
-        street: u.address?.street || "",
-        city: u.address?.city || "",
-        state: u.address?.state || "",
-        pincode: u.address?.pincode || "",
-      });
+        const u = res.data.user;
 
-      setLoading(false);
+        setForm({
+          name: u.name || "",
+          phone: u.phone || "",
+          street: u.address?.street || "",
+          city: u.address?.city || "",
+          state: u.address?.state || "",
+          pincode: u.address?.pincode || "",
+        });
+      } catch (err) {
+        console.error("EDIT PROFILE LOAD ERROR:", err);
+
+        if (err.response?.status === 401) {
+          localStorage.removeItem("userToken");
+          navigate("/login");
+        }
+      } finally {
+        setLoading(false);
+      }
     };
 
     fetchProfile();
@@ -61,28 +72,33 @@ const EditProfile = () => {
   const submitHandler = async (e) => {
     e.preventDefault();
 
-    const token = localStorage.getItem("userToken");
+    try {
+      const token = localStorage.getItem("userToken");
 
-    await axios.put(
-      `${API_BASE}/api/user/profile`,
-      {
-        name: form.name,
-        phone: form.phone,
-        address: {
-          street: form.street,
-          city: form.city,
-          state: form.state,
-          pincode: form.pincode,
+      // ✅ FIXED HERE ALSO
+      await axios.put(
+        `${API_BASE}/api/users/profile`,
+        {
+          name: form.name,
+          phone: form.phone,
+          address: {
+            street: form.street,
+            city: form.city,
+            state: form.state,
+            pincode: form.pincode,
+          },
         },
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
-    navigate("/profile");
+      navigate("/profile");
+    } catch (err) {
+      console.error("UPDATE PROFILE ERROR:", err);
+    }
   };
 
   if (loading) {

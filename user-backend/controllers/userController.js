@@ -5,7 +5,7 @@ import User from "../models/User.js";
 ========================= */
 export const getProfile = async (req, res) => {
   try {
-    const user = await User.findById(req.user._id).select("-password");
+    const user = await User.findById(req.user.id).select("-password");
 
     if (!user) {
       return res.status(404).json({
@@ -34,7 +34,7 @@ export const updateProfile = async (req, res) => {
   try {
     const { name, phone, address } = req.body;
 
-    const user = await User.findById(req.user._id);
+    const user = await User.findById(req.user.id);
 
     if (!user) {
       return res.status(404).json({
@@ -43,11 +43,9 @@ export const updateProfile = async (req, res) => {
       });
     }
 
-    /* ===== UPDATE BASIC INFO ===== */
     if (name !== undefined) user.name = name;
     if (phone !== undefined) user.phone = phone;
 
-    /* ===== UPDATE ADDRESS (SAFE) ===== */
     if (address) {
       user.address = {
         street: address.street || "",

@@ -26,8 +26,9 @@ const Profile = () => {
           return;
         }
 
+        // ✅ FIXED ROUTE (users not user)
         const res = await axios.get(
-          `${API_BASE}/api/user/profile`,
+          `${API_BASE}/api/users/profile`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -38,7 +39,13 @@ const Profile = () => {
         setUser(res.data.user);
       } catch (err) {
         console.error("PROFILE LOAD ERROR:", err);
-        setError("Failed to load profile");
+
+        if (err.response?.status === 401) {
+          localStorage.removeItem("userToken");
+          navigate("/login");
+        } else {
+          setError("Failed to load profile");
+        }
       } finally {
         setLoading(false);
       }
@@ -48,7 +55,7 @@ const Profile = () => {
   }, [navigate]);
 
   /* ======================
-     STATES
+     LOADING STATE
   ====================== */
   if (loading) {
     return (
@@ -58,6 +65,9 @@ const Profile = () => {
     );
   }
 
+  /* ======================
+     ERROR STATE
+  ====================== */
   if (error) {
     return (
       <div className="profile-page">
@@ -69,7 +79,7 @@ const Profile = () => {
   if (!user) return null;
 
   /* ======================
-     FORMAT ADDRESS (FIX)
+     FORMAT ADDRESS
   ====================== */
   const formattedAddress = user.address
     ? [
