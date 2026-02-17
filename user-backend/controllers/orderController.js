@@ -9,7 +9,8 @@ export const placeOrder = async (req, res) => {
   try {
     const { items, totalAmount } = req.body;
 
-    if (!req.user || !req.user._id) {
+    // ✅ FIXED: use req.user.id (not _id)
+    if (!req.user || !req.user.id) {
       return res.status(401).json({
         success: false,
         message: "Unauthorized",
@@ -32,14 +33,14 @@ export const placeOrder = async (req, res) => {
 
     const order = await Order.create({
       orderId: crypto.randomUUID(),
-      user: req.user._id,
+      user: req.user.id, // ✅ FIXED HERE
       items,
       totalAmount,
       orderStatus: "Placed",
       isViewedByAdmin: false,
     });
 
-    // 🔔 notify admin dashboard
+    // 🔔 Notify admin dashboard via socket
     io.emit("new-order");
 
     res.status(201).json({
@@ -78,7 +79,7 @@ export const getAllOrders = async (req, res) => {
 };
 
 /* =========================
-   ADMIN: GET ORDER BY ID ✅
+   ADMIN: GET ORDER BY ID
 ========================= */
 export const getOrderById = async (req, res) => {
   try {
