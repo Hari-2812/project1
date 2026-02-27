@@ -5,7 +5,7 @@ import {
   FaStar,
   FaShoppingCart,
 } from "react-icons/fa";
-import "../styles/productDetail.css";
+import "../styles/ProductDetail.css";
 
 const API_BASE =
   import.meta.env.VITE_API_URL || "http://localhost:5000";
