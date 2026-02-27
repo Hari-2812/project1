@@ -111,7 +111,7 @@ router.post(
       // ✅ SAFE image handling
       const images =
         (req.files || [])
-          .map((file) => `/uploads/${file.filename}`)
+          .map((file) => file.path)
           .filter(Boolean);
 
       let parsedSizes = [];
@@ -233,7 +233,7 @@ router.put(
       // ✅ SAFE image append
       if (req.files && req.files.length > 0) {
         const newImages = req.files
-          .map((file) => `/uploads/${file.filename}`)
+          .map((file) => file.path)
           .filter(Boolean);
 
         product.images.push(...newImages);
