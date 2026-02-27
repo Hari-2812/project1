@@ -6,7 +6,7 @@ export default function About() {
 
   useEffect(() => {
     axios
-      .get("http://localhost:5000/api/about")
+      .get(`${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}/api/about`)
       .then((res) => setAbout(res.data))
       .catch((err) => console.error("ABOUT ERROR:", err));
   }, []);
