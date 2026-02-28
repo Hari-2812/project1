@@ -34,7 +34,7 @@ export default function GirlsProducts() {
   const fetchProducts = async () => {
     try {
       setLoading(true);
-      const res = await fetch("http://localhost:5000/api/products");
+      const res = await fetch(`${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}/api/products`);
       const data = await res.json();
 
       setProducts(Array.isArray(data.products) ? data.products : []);
@@ -106,3 +106,4 @@ export default function GirlsProducts() {
     </div>
   );
 }
+

@@ -5,7 +5,7 @@ import { io } from "socket.io-client";
   ✅ Use correct token key
   ✅ Prevent auto-login after logout
 */
-const socket = io("http://localhost:5000", {
+const socket = io(import.meta.env.VITE_BACKEND_URL || "http://localhost:5000", {
   autoConnect: false, // 🔴 VERY IMPORTANT
   transports: ["websocket", "polling"],
   withCredentials: true,
@@ -46,3 +46,4 @@ socket.on("connect_error", (err) => {
 });
 
 export default socket;
+

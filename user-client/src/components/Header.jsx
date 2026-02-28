@@ -58,7 +58,7 @@ export default function Header() {
   ====================== */
   const logout = async () => {
     try {
-      await fetch("http://localhost:5000/api/auth/logout", {
+      await fetch(`${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}/api/auth/logout`, {
         method: "GET",
         credentials: "include",
       });
@@ -154,3 +154,4 @@ export default function Header() {
     </header>
   );
 }
+

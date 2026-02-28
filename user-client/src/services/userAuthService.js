@@ -1,4 +1,4 @@
-const API = "http://localhost:5000/api/auth"
+const API = `${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}/api/auth`
 
 export const loginUser = async (data) => {
   const res = await fetch(`${API}/login`, {
@@ -23,3 +23,4 @@ export const registerUser = async (data) => {
 
   return res.json()
 }
+

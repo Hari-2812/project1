@@ -9,7 +9,7 @@ const TrackOrder = () => {
   const trackOrder = async () => {
     try {
       const res = await axios.get(
-        `http://localhost:5000/api/orders/track/${orderId}`
+       `${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}/api/orders/track/${orderId}`
       )
       setOrder(res.data)
     } catch {

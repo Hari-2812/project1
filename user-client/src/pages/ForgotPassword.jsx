@@ -5,7 +5,7 @@ export default function ForgotPassword() {
   const [msg, setMsg] = useState('')
 
   const send = async () => {
-    await fetch('http://localhost:5000/api/auth/forgot', {
+    await fetch(`${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}/api/auth/forgot`, {
       method: 'POST',
       headers: { 'Content-Type':'application/json' },
       body: JSON.stringify({ email })
@@ -24,3 +24,4 @@ export default function ForgotPassword() {
     </div>
   )
 }
+
