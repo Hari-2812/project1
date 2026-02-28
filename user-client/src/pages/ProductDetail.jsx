@@ -39,8 +39,8 @@ export default function ProductDetail() {
 
         // Fetch related products (same category)
         const relatedRes = await fetch(
-          `http://localhost:5000/api/products?category=${data.product.category}``${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}/api/products?category=${data.product.category}`
-        );
+  `${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}/api/products?category=${data.product.category}`
+);
         const relatedData = await relatedRes.json();
 
         const filtered = relatedData.products
