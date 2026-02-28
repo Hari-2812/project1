@@ -32,14 +32,14 @@ export default function ProductDetail() {
     const fetchProduct = async () => {
       try {
         const res = await fetch(
-          `http://localhost:5000/api/products/${id}`
+          `${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}/api/products/${id}`
         );
         const data = await res.json();
         setProduct(data.product);
 
         // Fetch related products (same category)
         const relatedRes = await fetch(
-          `http://localhost:5000/api/products?category=${data.product.category}`
+          `http://localhost:5000/api/products?category=${data.product.category}``${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}/api/products?category=${data.product.category}`
         );
         const relatedData = await relatedRes.json();
 
