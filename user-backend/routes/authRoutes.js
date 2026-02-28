@@ -177,9 +177,7 @@ router.get(
   passport.authenticate("google", { session: false }),
   (req, res) => {
     const token = createToken(req.user);
-    res.redirect(
-      `http://localhost:5173/google-success?token=${token}`
-    );
+    res.redirect(`${process.env.CLIENT_URL}/google-success?token=${token}`);
   }
 );
 
