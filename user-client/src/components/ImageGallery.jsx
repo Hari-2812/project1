@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
-import "../styles/productDetail.css";
+import "../styles/ProductDetail.css";
 
 const images = [
   "https://images.unsplash.com/photo-1520975916090-3105956dac38?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
