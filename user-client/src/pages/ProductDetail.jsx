@@ -32,14 +32,14 @@ export default function ProductDetail() {
     const fetchProduct = async () => {
       try {
         const res = await fetch(
-          `http://localhost:5000/api/products/${id}`
+          `${BACKEND_URL}/api/products/${id}`
         );
         const data = await res.json();
         setProduct(data.product);
 
-        // Fetch related products (same category)
+        /* FETCH RELATED PRODUCTS */
         const relatedRes = await fetch(
-          `http://localhost:5000/api/products?category=${data.product.category}`
+          `${BACKEND_URL}/api/products?category=${data.product.category}`
         );
         const relatedData = await relatedRes.json();
 
@@ -56,7 +56,8 @@ export default function ProductDetail() {
     fetchProduct();
   }, [id]);
 
-  if (!product) return <h2 style={{ textAlign: "center" }}>Loading...</h2>;
+  if (!product)
+    return <h2 style={{ textAlign: "center" }}>Loading...</h2>;
 
   /* ================= IMAGES ================= */
   const images =
@@ -123,7 +124,10 @@ export default function ProductDetail() {
           </p>
 
           <div className="pd-rating">
-            <FaStar /><FaStar /><FaStar /><FaStar />
+            <FaStar />
+            <FaStar />
+            <FaStar />
+            <FaStar />
             <FaStar className="dim" />
             <span>4.5 (128 reviews)</span>
           </div>
@@ -174,7 +178,10 @@ export default function ProductDetail() {
           {/* QUANTITY */}
           <div className="pd-section">
             <label>Quantity</label>
-            <QuantitySelector value={qty} onChange={setQty} />
+            <QuantitySelector
+              value={qty}
+              onChange={setQty}
+            />
           </div>
 
           {/* ACTIONS */}
@@ -242,7 +249,9 @@ export default function ProductDetail() {
                 <div
                   key={p._id}
                   className="pd-related-card"
-                  onClick={() => navigate(`/product/${p._id}`)}
+                  onClick={() =>
+                    navigate(`/product/${p._id}`)
+                  }
                 >
                   <img src={img} alt={p.name} />
                   <h4>{p.name}</h4>
