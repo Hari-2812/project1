@@ -10,7 +10,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import { useFavorite } from "../context/FavoriteContext";
 import QuantitySelector from "../components/QuantitySelector";
-import "../styles/productDetail.css";
+import "../styles/ProductDetail.css";
 
 const BACKEND_URL =
   import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
