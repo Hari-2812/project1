@@ -1,7 +1,7 @@
 import { FaTrashAlt, FaPlus, FaMinus } from "react-icons/fa";
 import { useCart } from "../context/CartContext";
 import { useNavigate } from "react-router-dom";
-import "../styles/cart.css";
+import "../styles/Cart.css";
 import QuantitySelector from "../components/QuantitySelector";
 
 export default function Cart() {
