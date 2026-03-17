@@ -2,12 +2,12 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import "../styles/TrackOrder.css";
+import API_BASE_URL from "../config/apiBase";
 
 /* ======================
    API BASE (SAFE)
 ====================== */
-const API_BASE =
-  import.meta.env.VITE_API_URL || "http://localhost:5000";
+const API_BASE = API_BASE_URL;
 
 const AdminTrackOrder = () => {
   const { id } = useParams();

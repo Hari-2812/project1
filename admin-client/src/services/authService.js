@@ -1,4 +1,6 @@
-const API = "http://localhost:5000/api/auth"
+import { API_BASE_URL_WITH_API } from "../config/apiBase";
+
+const API = `${API_BASE_URL_WITH_API}/auth`;
 
 export const loginAdmin = async (data) => {
   try {
