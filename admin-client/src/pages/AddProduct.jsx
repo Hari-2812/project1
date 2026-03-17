@@ -1,5 +1,6 @@
 import { useState } from "react";
 import axios from "axios";
+import { API_BASE_URL_WITH_API } from "../config/apiBase";
 import "../styles/AddProduct.css";
 
 /* constants */
@@ -108,7 +109,7 @@ export default function AddProduct() {
       );
 
       await axios.post(
-        `${import.meta.env.VITE_API_URL}/api/products/bulk`,
+        `${API_BASE_URL_WITH_API}/products/bulk`,
         formData,
         {
           headers: {

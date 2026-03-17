@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { API_BASE_URL_WITH_API } from "../config/apiBase";
 
 export default function AdminMessages() {
   const [messages, setMessages] = useState([]);
@@ -10,7 +11,7 @@ export default function AdminMessages() {
 
   const fetchMessages = async () => {
     const { data } = await axios.get(
-      "http://localhost:5000/api/contact"
+      `${API_BASE_URL_WITH_API}/contact`
     );
     setMessages(data);
   };

@@ -3,8 +3,9 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import socket from "../services/socket";
 import "../styles/Dashboard.css";
+import { API_BASE_URL_WITH_API } from "../config/apiBase";
 
-const API_BASE = "http://localhost:5000/api";
+const API_BASE = API_BASE_URL_WITH_API;
 
 const Dashboard = () => {
   const navigate = useNavigate();
