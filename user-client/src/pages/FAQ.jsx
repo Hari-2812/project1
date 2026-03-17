@@ -6,7 +6,7 @@ export default function FAQ() {
 
   useEffect(() => {
     axios
-      .get("http://localhost:5000/api/faq")
+      .get(`${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}/api/faq`)
       .then((res) => setData(res.data))
       .catch((err) => console.error("FAQ ERROR:", err));
   }, []);
@@ -26,3 +26,4 @@ export default function FAQ() {
     </div>
   );
 }
+

@@ -1,5 +1,5 @@
 import { FaPlus, FaMinus } from "react-icons/fa";
-import "../styles/quantitySelector.css";
+import "../styles/QuantitySelector.css";
 
 export default function QuantitySelector({ value, onChange }) {
   return (

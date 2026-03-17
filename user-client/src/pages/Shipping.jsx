@@ -6,7 +6,7 @@ export default function Shipping() {
 
   useEffect(() => {
     axios
-      .get("http://localhost:5000/api/shipping")
+      .get(`${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}/api/shipping`)
       .then((res) => setShipping(res.data))
       .catch((err) => console.error("SHIPPING ERROR:", err));
   }, []);
@@ -55,3 +55,4 @@ export default function Shipping() {
     </div>
   );
 }
+

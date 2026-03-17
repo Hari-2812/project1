@@ -23,7 +23,7 @@ export default function Contact() {
     setSuccess("");
 
     try {
-      await axios.post("http://localhost:5000/api/contact", form);
+      await axios.post(`${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}/api/contact`, form);
       setSuccess("Message sent successfully!");
       setForm({ name: "", email: "", subject: "", message: "" });
     } catch (error) {
@@ -78,3 +78,4 @@ export default function Contact() {
     </div>
   );
 }
+

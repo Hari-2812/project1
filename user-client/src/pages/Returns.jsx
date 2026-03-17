@@ -6,7 +6,7 @@ export default function Returns() {
 
   useEffect(() => {
     axios
-      .get("http://localhost:5000/api/returns")
+      .get(`${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}/api/returns`)
       .then((res) => setPolicy(res.data))
       .catch((err) => console.error("RETURNS ERROR:", err));
   }, []);
@@ -55,3 +55,4 @@ export default function Returns() {
     </div>
   );
 }
+

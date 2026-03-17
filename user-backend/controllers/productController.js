@@ -33,7 +33,7 @@ export const bulkAddProducts = async (req, res) => {
 
       const images = req.files
         .slice(fileIndex, fileIndex + imageCount)
-        .map((file) => `/uploads/${file.filename}`);
+        .map((file) => file.path);
 
       fileIndex += imageCount;
 
